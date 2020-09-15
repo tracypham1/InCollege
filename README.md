@@ -24,3 +24,9 @@ Su    11:30 AM - 12:00  (optional)
 –The scrum master will then use Git to commit that day's code  
 -Eventually: The code will be tagged with the current date: 20xxxx.  
 –Eventually: Everyone will create a new branch in Git for the week's work. The branch will be named COP402020xxxx where xxxx is the month/date.
+
+Submit before Monday deadlines:  
+-A Jira burndown report for the sprint  
+–The complete updated code  
+-The Git labeled commit graph output  
+–The pytests with an indication of what new tests have been created this week  
