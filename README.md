@@ -9,7 +9,7 @@ Polt, Daniel    Developer 2
 Pun, Kelvin     Tester 1
 Quemba, Yakira  Tester 2
 
-M     3:30 PM - 4:00 
+M     3:30 PM - 4:00  
 T     11:30 AM - 12:00 
       2:00 PM - 4:00    (Sprint Planning)
 W     3:30 PM - 4:00 
