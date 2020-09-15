@@ -19,3 +19,8 @@ Sa    11:30 AM - 12:00  (optional)
 Su    11:30 AM - 12:00  (optional)  
       12:00 PM - 2:00   (Sprint Retrospective)  
 
+
+-Each night, the developers will ship a copy of their code to the scrum master  
+–The scrum master will then use Git to commit that day's code  
+-Eventually: The code will be tagged with the current date: 20xxxx.  
+–Eventually: Everyone will create a new branch in Git for the week's work. The branch will be named COP402020xxxx where xxxx is the month/date.
