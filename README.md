@@ -18,3 +18,4 @@ F     11:30 AM - 12:00
 Sa    11:30 AM - 12:00  (optional)  
 Su    11:30 AM - 12:00  (optional)  
       12:00 PM - 2:00   (Sprint Retrospective)  
+
