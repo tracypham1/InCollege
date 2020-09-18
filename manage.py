@@ -27,18 +27,22 @@ class Manage:
         with open(FILENAME,"r") as file:
             reader_csv = csv.reader(file)
             for row in reader_csv:
-                self.__list_student.append(s.Student(row[0], row[1]))
+                if row != []:
+                    self.__list_student.append(s.Student(row[0], row[1]))
                 
     
     def get_list(self):
         return self.__list_student
-            
+
+    
+    def get_length(self):
+        return len(self.__list_student)
 
     def add_student(self, student):
         for element in self.__list_student:
             if element.get_name() == student.get_name():
                 print("There is an account with the same name")
-                return
+                return False
         if len(self.__list_student) < 6:
             self.__list_student.append(student)
             print("The account of",student.get_name(), "is created!")
@@ -47,18 +51,7 @@ class Manage:
             with open(FILENAME,"a") as file:
                 writer_csv = csv.writer(file)
                 writer_csv.writerow((student.get_name(),student.get_password()))   
-            
+            return True
         else:
             print("All permitted accounts have been created, please come back later")
-    
-
-                    
-
-
-
-
-   
-
-    
-
-        
+            return False
