@@ -48,29 +48,54 @@ class Password_account:
             return True
 
 
-class name_Password:
+class Name_Password:
 
-    def name_check(self, name):
+    def name_check(self, user_name):
         manage = m.Manage()
         
         for element in manage.get_list():
-            if element.get_name() == name:
+            if element.get_user_name() == user_name:
                 
                 return True
 
-        print("Don't have any account with name:", name)
+        print("Don't have any account with name:", user_name)
         return False
 
-    def password_check(self, name, password):
+    def password_check(self, user_name, password):
         manage = m.Manage()
 
         for element in manage.get_list():
-            if element.get_name() == name and element.get_password() == password:
+            if element.get_user_name() == user_name and element.get_password() == password:
                 return True
 
         return False
 
     
+class Input_Value:
+    #If the value is number (int, float)
+    def isNumber(self,input):
+        try:
+            float(input)
+            return True
+        except ValueError:
+            return False
+
+    def isInt(self,input):
+        try:
+            int(input)
+            return True
+        except ValueError:
+            return False
+
+#check the value of option input
+def check_option(value, low, high):
+    p = Input_Value()
+    while not p.isInt(value) or int(value) < low or int(value) > high:
+        print("\nThe option should be a integer number between " + str(low) + " and " + str(high) + "!")
+        print("Try again for your option!\n")
+        value = input("Your selection: ")
+        
+    return value
 
 
 
