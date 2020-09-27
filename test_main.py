@@ -1,7 +1,12 @@
-
+import pytest
+import main
+import check as ch
 import manage as ma
 import student as st
 import job as jo
+import random
+from random import choice
+import string
 
 
 class TestClass:
@@ -21,7 +26,7 @@ class TestClass:
         stud5 = st.Student("YQ", "P@ssword123", "Yakira", "Quemba")
         assert manage.add_student(stud5) == stud5.get_user_name()
 
-    def test_Connection(self):          
+    def test_Connection(self):
         manage = ma.Manage()
         student = st.Student("TP1", "P@ssword123", "Tracy", "Pham")         #tests cases where there is a match
         assert manage.find_people("Tracy", "Pham") == student.get_user_name()
@@ -51,6 +56,71 @@ class TestClass:
         assert manage.add_job(job4, "KP") == job4.get_post_name()
         job5 = jo.Job("SCRUMMaster", "ManagesSCRUM", "USF", "FL", "30", "YQ")
         assert manage.add_job(job5, "YQ") == job5.get_post_name()
+
+    def test_passwordLength(self):
+        correct = random.randint(8, 12)
+        less = random.randint(0, 7)
+        more = random.randint(13, 40)
+        stringC = "x" * correct
+        assert ch.Password_account.max_character(self, stringC) == True and ch.Password_account.min_character(self,
+                                                                                                              stringC) == True
+        stringL = "x" * less
+        assert ch.Password_account.max_character(self, stringL) == False or ch.Password_account.min_character(self,
+                                                                                                              stringL) == False
+        stringM = "x" * more
+        assert ch.Password_account.max_character(self, stringM) == False or ch.Password_account.min_character(self,
+                                                                                                              stringM) == False
+
+    def test_capitalLetter(self):
+        length = random.randint(8, 12)
+        password = get_random_lowercase_string(length)
+        assert ch.Password_account.capital_letter(self, password) == False
+        password2 = ''.join(choice((str.upper, str.lower))(c) for c in password)
+        assert ch.Password_account.capital_letter(self, password2) == True
+
+    def test_oneDigit(self):
+        length = random.randint(8, 12)
+        password = get_random_lowercase_string(length)
+        numpass = list(password)
+        randint = random.randint(0, length - 1)
+        numpass[randint] = str(random.randint(0, 9))
+        password = ''.join(numpass)
+        assert ch.Password_account.digit(self, password) == True
+
+    def test_nonAlpha(self):
+        length = random.randint(8, 12)
+        password = get_random_lowercase_string(length)
+        alphapass = list(password)
+        nonAlpha = ["!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "-", "+", "*", "=", "/"]
+        randint = random.randint(0, length - 2)
+        alphapass[randint] = str(random.choice(nonAlpha))
+        alphapass[randint + 1] = str(random.randint(0, 9))
+        password = ''.join(alphapass)
+        assert ch.Password_account.digit(self, password) == True
+
+
+def get_random_lowercase_string(length):
+    letters = string.ascii_lowercase
+    return ''.join(random.choice(letters) for i in range(length))
+
+
+
+
+#This test checks that all the requirements for a valid password are being met
+def test_password():
+    chk = ch.Password_account()
+    assert chk.min_character("onetwoth") == True
+    assert chk.min_character("one") == False
+    assert chk.max_character("abcedfghjklm") == True
+    assert chk.max_character("abcdefghjkrty") == False
+    assert chk.capital_letter("Thinh") == True
+    assert chk.capital_letter("thinh") == False
+    assert chk.digit("hello1") == True
+    assert chk.digit("hello") == False
+    assert chk.non_alpha("no@") == True
+    assert chk.non_alpha("no") == False
+
+
 
 
 
