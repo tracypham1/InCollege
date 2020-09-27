@@ -66,10 +66,10 @@ class Manage:
                 print("Try again!")
                 return None #It is easier for pytest
        
-        if len(self.__list_student) < 6:
+        if len(self.__list_student) < 5:
             self.__list_student.append(student)
             user_name = student.get_user_name()
-            print("\nCongratulations",student.get_name(), "\nYou signed up and logged in successfully!")
+            print("\nCongratulate",student.get_name(), "\nYou signed up and logged in successfully!")
 
             #need to add a new student to student_data.csv
             with open(FILENAME,"a") as file:
@@ -157,7 +157,7 @@ class Manage:
 
 
     def add_job(self, job, n):
-        if len(self.__list_job) >= 6:
+        if len(self.__list_job) >= 5:
             print("You cannot post more job! Limit 5!")
             return None
 
@@ -176,7 +176,7 @@ class Manage:
         
         title = input("Enter Title: ")
         description = input("Enter Description: ")
-        employer = input("Enter Employer: ")
+        employer = input("Enter Emplyer: ")
         location = input("Enter Location: ")
         salary = input("Salary: ")
 
@@ -212,4 +212,5 @@ class Manage:
 
     
 
+        
         
