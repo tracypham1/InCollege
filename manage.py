@@ -69,7 +69,7 @@ class Manage:
         if len(self.__list_student) < 6:
             self.__list_student.append(student)
             user_name = student.get_user_name()
-            print("\nCongratulate",student.get_name(), "\nYou signed up and logged in successfully!")
+            print("\nCongratulations",student.get_name(), "\nYou signed up and logged in successfully!")
 
             #need to add a new student to student_data.csv
             with open(FILENAME,"a") as file:
@@ -157,13 +157,10 @@ class Manage:
 
 
     def add_job(self, job, n):
-        number = 1
-        for element in self.__list_job:
-            if element.get_post_name() == n:
-                number += 1
-        if number > 5:
+        if len(self.__list_job) >= 6:
             print("You cannot post more job! Limit 5!")
             return None
+
         else:
             self.__list_job.append(job)
             print("You posted a job in InCollege System")
@@ -179,7 +176,7 @@ class Manage:
         
         title = input("Enter Title: ")
         description = input("Enter Description: ")
-        employer = input("Enter Emplyer: ")
+        employer = input("Enter Employer: ")
         location = input("Enter Location: ")
         salary = input("Salary: ")
 
