@@ -1,7 +1,7 @@
 # InCollege
 CEN4020 Software Engineering Project
 
-Week 10/05/2020 
+Week 10/05/2020  
 Polt, Daniel      Scrum Master  
 Pun, Kelvin       Developer 1  
 Quemba, Yakira    Developer 2  
