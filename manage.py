@@ -9,23 +9,28 @@ import csv
 import os.path
 import check
 import job as j
+import settings as stg
+import profiles as pro
 
 FILENAME = "student_data.csv"
 FILENAME_JOB = "job_data.csv"
+FILENAME_STG = "settings.csv"
+FILENAME_PRO = "profiles.csv"
 
 class Manage:
     def __init__(self):
         
         #create a list of student Object
-        #selft__list_student will store object of Student class
+        #self__list_student will store object of Student class
         self.__list_student = []
         self.__list_job = []
+        self.__list_settings = []
+        self.__list_profiles = []
 
         #add title for the student_data.csv
         if not os.path.isfile(FILENAME):
             with open(FILENAME,"w") as file:
                 writer_csv = csv.writer(file)
-                writer_csv.writerow(("User_Name","Password","First_Name","Last_Name"))
 
         #add data from student_data.csv to __self.__list_student
         with open(FILENAME,"r") as file:
@@ -48,7 +53,31 @@ class Manage:
                 if row != []:
                     self.__list_job.append(j.Job(row[0], row[1], row[2], row[3], row[4], row[5]))
                     
-                
+        #add title for the settings.csv
+        if not os.path.isfile(FILENAME_STG):
+            with open(FILENAME_STG,"w") as file:
+                writer_csv = csv.writer(file)
+                writer_csv.writerow(("user", "email_notif","sms_notif","targeted_ads","language"))
+
+        #add data from settings.csv to __self.__list_settings
+        with open(FILENAME_STG,"r") as file:
+            reader_csv = csv.reader(file)
+            for row in reader_csv:
+                if row != []:
+                    self.__list_settings.append(stg.Settings(row[0], row[1], row[2], row[3], row[4]))
+  
+        #add title for the profiles.csv
+        if not os.path.isfile(FILENAME_PRO):
+            with open(FILENAME_PRO,"w") as file:
+                writer_csv = csv.writer(file)
+                writer_csv.writerow(("user", "title","major","university","bio", "experience", "education"))
+
+        #add data from profiles.csv
+        with open(FILENAME_PRO,"r") as file:
+            reader_csv = csv.reader(file)
+            for row in reader_csv:
+                if row != []:
+                    self.__list_profiles.append(pro.Profiles(row[0], row[1], row[2], row[3], row[4], row[5], row[6]))
     
     def get_list(self):
         return self.__list_student
@@ -75,6 +104,11 @@ class Manage:
             with open(FILENAME,"a") as file:
                 writer_csv = csv.writer(file)
                 writer_csv.writerow((student.get_user_name(),student.get_password(),student.get_first(),student.get_last()))  
+
+            #create settings associated with this user
+            with open(FILENAME_STG, "a") as file_stg:
+                writer_csv = csv.writer(file_stg)
+                writer_csv.writerow((user_name, "on", "on", "on", "English")) #all features on and language set to english when account is created
 
             return user_name 
             
@@ -140,7 +174,7 @@ class Manage:
         return manage.add_student(student)
 
 
-    
+
     def find_people(self, first, last):
         #create a new object of Manage class
         manage = Manage()
@@ -189,8 +223,69 @@ class Manage:
         job = j.Job(title,description,employer,location,salary, post_name)
         return manage.add_job(job,post_name) # return user's name who posted a job,  We can return a tupe here
         
+    # user = the user that is logged in and their settings
+    # field = the setting trying to check so type exactly one of these ("email_notif", "sms_notif", "targeted_ads", or "language")    
+    # state = whether is on/off or e/s
+    def check_settings(self, user, field, state):
+        manage = Manage()
+        #find the settings object associated with that user
+        for element in manage.__list_settings:
+            if element.get_user() == user:
+                if field == "email_notif":
+                    return element.get_email_notif()
+                elif field == "sms_notif":
+                    return element.get_sms_notif()
+                elif field == "targeted_ads":
+                    return element.get_targeted_ads()
+                elif field == "language":
+                    return element.get_language()
+                else: 
+                    print("This field in the Guest Controls/Settings do not exist")
+                    return "DNE"
+        
+        #shouldn't ever return the user's username bc settings are only made when users are, so will need to check if it returns the user's username
+        print("This user DNE")
+        return element.get_user()
+
+    def createProfile(self, name):                  #Creates Profiles
+        title = input("Enter Title: ")
+        major = input("Enter Major: ")
+        major = major.title()
+        university = input("Enter University: ")
+        university = university.title()
+        bio = input("About Yourself: ")
+        expCheck = input("Do you have any experience you would like to add? (Yes/No)  ")
+        experience = ""
+        while expCheck.upper()!="YES" and expCheck.upper()!="NO":
+            expCheck=input("Invalid Input. Try Again: ")
+        if expCheck.upper() == "YES":
+            for x in range(3):
+                expTitle = input("Job Title: ")
+                expEmployer = input("Employer: ")
+                expDateSt = input("Date Started MM/DD/YY: ")
+                expDateEnd = input("Date Ended MM/DD/YY: ")
+                expLocation = input("Job Location: ")
+                expTitle = input("Job Description: ")
+                experience = experience + "(" + expTitle + "," + expEmployer + "," + expDateSt + "," + expDateEnd + "," + expLocation + "," + expTitle + ")"
+                if(x<2):
+                    another = input("Do you have more experience to add? (Yes/No)  ")
+                    while another.upper()!="YES" and another.upper()!="NO":
+                        another=input("Invalid Input. Try Again: ")
+                if another.upper()=="NO":
+                    break
+        school = input("\nEducation - Enter School Name: ")
+        degree = input("Enter Degree: ")
+        years = input("Enter Years Attended: ")
+        education = "[" + school + "," + degree + "," + years + "]" 
+
+        print("\nYou have created a profile in the InCollege System!")
+        with open(FILENAME_PRO, "a") as file_pro:
+            writer_csv = csv.writer(file_pro)
+            writer_csv.writerow((name, title, major, university, bio, experience, education))
 
 
+    def viewProfile(self):
+        return 0
 
         
 
