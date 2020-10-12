@@ -11,6 +11,7 @@ import check
 import job as j
 import settings as stg
 import profiles as pro
+from datetime import datetime
 
 FILENAME = "student_data.csv"
 FILENAME_JOB = "job_data.csv"
@@ -31,6 +32,7 @@ class Manage:
         if not os.path.isfile(FILENAME):
             with open(FILENAME,"w") as file:
                 writer_csv = csv.writer(file)
+                writer_csv.writerow(("User_Name","Password","First_Name","Last_Name"))
 
         #add data from student_data.csv to __self.__list_student
         with open(FILENAME,"r") as file:
@@ -95,7 +97,7 @@ class Manage:
                 print("Try again!")
                 return None #It is easier for pytest
        
-        if len(self.__list_student) < 5:
+        if len(self.__list_student) < 6:
             self.__list_student.append(student)
             user_name = student.get_user_name()
             print("\nCongratulate",student.get_name(), "\nYou signed up and logged in successfully!")
@@ -190,6 +192,8 @@ class Manage:
         return None
 
 
+
+
     def add_job(self, job, n):
         if len(self.__list_job) >= 5:
             print("You cannot post more job! Limit 5!")
@@ -262,11 +266,19 @@ class Manage:
             for x in range(3):
                 expTitle = input("Job Title: ")
                 expEmployer = input("Employer: ")
-                expDateSt = input("Date Started MM/DD/YY: ")
-                expDateEnd = input("Date Ended MM/DD/YY: ")
+                expDateSt = input("Date Started MM/DD/YYYY: ")
+                while(valiDate(expDateSt)==False):
+                    expDateSt = input("Date not valid. Try Again: ")
+                expDateEnd = input("Date Ended MM/DD/YYYY: ")
+                while(valiDate(expDateEnd)==False or compareDates(expDateSt, expDateEnd)==False):
+                    if(valiDate(expDateEnd)==False):
+                        expDateEnd = input("Date not valid. Try Again: ")
+                    elif(compareDates(expDateSt, expDateEnd)==False):
+                        expDateEnd = input("Date is before start date. Try Again: ")
+
                 expLocation = input("Job Location: ")
-                expTitle = input("Job Description: ")
-                experience = experience + "(" + expTitle + "," + expEmployer + "," + expDateSt + "," + expDateEnd + "," + expLocation + "," + expTitle + ")"
+                expDesc = input("Job Description: ")
+                experience = experience + "(" + expTitle + "," + expEmployer + "," + expDateSt + "," + expDateEnd + "," + expLocation + "," + expDesc + ")"
                 if(x<2):
                     another = input("Do you have more experience to add? (Yes/No)  ")
                     while another.upper()!="YES" and another.upper()!="NO":
@@ -284,15 +296,62 @@ class Manage:
             writer_csv.writerow((name, title, major, university, bio, experience, education))
 
 
-    def viewProfile(self):
-        return 0
+    def viewProfile(self, name):
+        with open(FILENAME_PRO,"r") as file:
+            reader_csv = csv.reader(file)
+            for row in reader_csv:
+                if row != [] and row[0] == name:
+                    print()
+                    for element in self.__list_student:
+                        if element.get_user_name() == name:
+                            print(element.get_name())
+                    print("Title: " + row[1])
+                    print("Major: " + row[2])
+                    print("University Name: " + row[3])
+                    print("About me: " + row[4])
+                    experience = row[5]
+                    list_experience = experience.split(")")
+                    list_experience.pop()
+                    print()
+                    for element in list_experience:
+                        sub_element = element[1:]
+                        list_sub_experience = sub_element.split(",")
+                        print("Title: " + list_sub_experience[0])
+                        print("Job Description: " + list_sub_experience[5])
+                        print("Place of work: " + list_sub_experience[4])
+                        print("Start date: " + list_sub_experience[2])
+                        print("End date: " + list_sub_experience[3])
+                        print("Employer: " + list_sub_experience[1])
+                        print()
+                    print("Education information")
+                    education = row[6]
+                    len_education = len(education) - 1
+                    sub_education = education[1:len_education]
+                    
+                    list_sub_education = sub_education.split(",")
+                    print("University: " + list_sub_education[0])
+                    print("Major: " + list_sub_education[1])
+                    print("Years so far: " + list_sub_education[2])
+                    return name
+                
+                
+        print()
+        print("You did not create a profile!")
+        return name
 
         
 
+def valiDate(date_text):
+    try:
+        datetime.strptime(date_text, '%m/%d/%Y')
+        return True
+    except ValueError:
+        return False
 
-
-
-
+def compareDates(date1, date2):
+    d1 = datetime.strptime(date1, '%m/%d/%Y')
+    d2 = datetime.strptime(date2, '%m/%d/%Y')
+    return d1<d2
 
 
 

@@ -417,14 +417,15 @@ def log_in_Screen(name):
     print("(3) Join Friend")
     print("(4) Create Profile")
     print("(5) View Profile")
-    print("(6) New Skill")
-    print("(7) Useful links")
-    print("(8) Important links")
-    print("(9) Sign Out")
+    print("(6) Display friends profile")
+    print("(7) New Skill")
+    print("(8) Useful links")
+    print("(9) Important links")
+    print("(10) Sign Out")
     choice = input("Your selection: ")
 
     #check the right value of input from user
-    choice = check.check_option(choice,1,7)
+    choice = check.check_option(choice,1,10)
     
     if(choice == "1"): 
         manage = m.Manage()
@@ -439,20 +440,57 @@ def log_in_Screen(name):
     elif(choice == "4"):
         manage = m.Manage()
         manage.createProfile(name)
-        question = input("(1) Return to Menu\n(2) Exit\n")
-        if question == "1":
-            log_in_Screen(name)
+        choice = input("\nEnter 1 to return to previous screen: ")
+        #check the right value of input from user
+        choice = check.check_option(choice,1,1)
+        log_in_Screen(name)
     elif(choice == "5"):
         manage = m.Manage()
-        manage.viewProfile()
-    elif(choice == "6"):
-        learnSkill_Screen(name)
+        manage.viewProfile(name)
+        choice = input("\nEnter 1 to return to previous screen: ")
+        #check the right value of input from user
+        choice = check.check_option(choice,1,1)
+        log_in_Screen(name)
+    elif (choice == "6"):
+        friend_Screen(name)
+        log_in_Screen(name)
     elif(choice == "7"):
-        usefulLinks_Screen(1,name)
+        learnSkill_Screen(name)
     elif(choice == "8"):
-        importantLinks_Screen(1, name)
+        usefulLinks_Screen(1,name)
     elif(choice == "9"):
+        importantLinks_Screen(1, name)
+    elif(choice == "10"):
         welcomeScreen()
+
+
+
+def friend_Screen(name):
+    print("Here is a list of your friends:")
+    print("Type in the first and last name of your friend to view their profile:")
+    first_name_orig = input('Enter the first name:')
+    last_name_orig = input('Enter the last name:')
+    entire_name = first_name_orig + last_name_orig
+    f = open("student_data.csv", "r")
+    val = 1
+    for x in f:
+
+        if val == 0:
+            val = 1
+        else:
+            list = x.split(",")
+            first_name = list[2]
+            last_name = list[3]
+            last_name = last_name.rstrip()
+            if first_name_orig == first_name and last_name_orig == last_name:
+                print("username is: " + list[0])
+                username = list[0]
+                manage = m.Manage()
+                manage.viewProfile(username)
+            val = 0
+    list.clear()
+
+    f.close()
 
 
 def sign_up_Screen():
