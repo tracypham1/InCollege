@@ -17,6 +17,7 @@ FILENAME = "student_data.csv"
 FILENAME_JOB = "job_data.csv"
 FILENAME_STG = "settings.csv"
 FILENAME_PRO = "profiles.csv"
+FILENAME_FRI = "friends.csv"
 
 class Manage:
     def __init__(self):
@@ -97,7 +98,7 @@ class Manage:
                 print("Try again!")
                 return None #It is easier for pytest
        
-        if len(self.__list_student) < 6:
+        if len(self.__list_student) < 11:
             self.__list_student.append(student)
             user_name = student.get_user_name()
             print("\nCongratulate",student.get_name(), "\nYou signed up and logged in successfully!")
@@ -124,7 +125,7 @@ class Manage:
         manage = Manage()
         
         #when the student_data.csv file doesn't have any user's record
-        if len(manage.get_list()) == 1:
+        if len(manage.get_list()) == 0:
             print("\nDon't have any account in System")
             print("You have to sign up for a new account!\n")
             return None 
@@ -339,7 +340,29 @@ class Manage:
         print("You did not create a profile!")
         return name
 
-        
+
+
+    def add_friend(self, student1, student2, n):
+        with open(FILENAME_FRI,"a") as file:
+            writer_csv = csv.writer(file)
+            writer_csv.writerow((student1.get_user_name(),student2.get_user_name()))
+            writer_csv.writerow((student2.get_user_name(),student1.get_user_name()))
+
+    def return_students_from_last(self, lname):
+        blank = []
+        count = 0
+        lines = list()
+        results = list()
+        #read current students and fill 'lines' with relevant students
+        with open(FILENAME, 'r') as readFile:
+            reader = csv.reader(readFile)
+            for row in reader:
+                if row != blank: #or else there will be too much empty space
+                    lines.append(row)
+                    count = count + 1
+                    if lines[count-1][3] == lname:
+                        results.append(row)
+            return results
 
 def valiDate(date_text):
     try:

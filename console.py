@@ -3,7 +3,7 @@ import check
 import csv
 import os.path
 
-
+FILENAME_STD = "student_data.csv"
 FILENAME_STG = "settings.csv"
 FILENAME_POL = "policy.csv"
 FILENAME_PRO = "profiles.csv"
@@ -542,3 +542,54 @@ def join_Incollege_Screen():
     elif (choice == "3"):
         welcomeScreen()
 
+
+def student_search_console(num, name):
+    #display privacy policy 
+    manage = m.Manage()
+    policy(num, name, "5")
+
+    if num == 0:
+        print("Sign in to search for friends")
+        print("(1) Go back to Important links")
+        choice = input("Your selection: ")
+
+        # check the right value of input from user
+        choice = check.check_option(choice, 1, 1)
+
+        if (choice == "1"):
+            importantLinks_Screen(num, name)
+
+    elif num == 1: #signed in user will be able to choose guest controls or change language
+        #helper variables
+        lines = list()
+        results = list()
+        entry = [" ", " ", " ", " "]
+        blank = []
+        count = 0
+
+        print()
+        print("Friend Search: Select one of the below options:")
+        print("(1) Search by Last Name")
+        print("(2) Search by University")
+        print("(3) Search by Major")
+        print("(4) Go back to previous screen: Important Links")
+        choice = input("Your selection: ")
+        # check the right value of input from user
+        choice = check.check_option(choice, 1, 4)
+
+        if (choice == "1"):
+            lname = input("Enter Last Name: ")
+            results = manage.return_students_from_last(lname)
+            for row in results:
+                print(row[0] + " " + row[1] + " " + row[2] + " " + row[3])
+        elif (choice == "2"):
+            #language(num, name)
+            count = count
+        elif (choice == "3"):
+            #language(num, name)
+            count= count
+        elif (choice == "4"):
+            importantLinks_Screen(num, name)
+
+
+        
