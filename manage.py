@@ -416,23 +416,43 @@ class Manage:
             return names
 
     def send_requests(self, sign_name, unames):
+        blank = []
         try:
             unames.remove(sign_name)
         except ValueError:
             gar = 0
         if (len(unames) == 0):
             print("No students found")
+            print()
         else:
+            duplicates = 0
             print("Enter '1' for yes and '0' for no.")
             print("Do you wish to send a request to connect to:")
             for uname in unames:
                 choice = input(uname + "?: ")
                 choice = check.check_option(choice, 0, 1)
                 if(choice == "1"):
-                    with open(FILENAME_REQ,"a") as file:
-                        writer_csv = csv.writer(file)
-                        writer_csv.writerow((sign_name, uname))  
-                    print("Request to connect sent")
+                    with open(FILENAME_REQ, 'r') as readFile:  
+                        reader = csv.reader(readFile)
+                        for row in reader:
+                            if row != blank:
+                                if row[0] == sign_name and row[1] == uname:
+                                    duplicates = duplicates + 1
+
+                    with open(FILENAME_FRI, 'r') as readFile2:  
+                        reader2 = csv.reader(readFile2)
+                        for row in reader2:
+                            if row != blank:
+                                if row[0] == sign_name and row[1] == uname:
+                                    duplicates = duplicates + 1
+
+                    if duplicates == 0:
+                        with open(FILENAME_REQ,"a") as file:
+                            writer_csv = csv.writer(file)
+                            writer_csv.writerow((sign_name, uname))  
+                        print("Request to connect sent")
+                    else:
+                        print("Friend request has already been sent or accepted")
 
 
 def valiDate(date_text):
