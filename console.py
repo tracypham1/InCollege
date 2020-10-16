@@ -7,6 +7,8 @@ FILENAME_STD = "student_data.csv"
 FILENAME_STG = "settings.csv"
 FILENAME_POL = "policy.csv"
 FILENAME_PRO = "profiles.csv"
+FILENAME_FRI = "friends.csv"
+FILENAME_REQ = "requests.csv"
 STORY = "success_story.txt"
 empty_string = " "
 
@@ -50,7 +52,7 @@ def welcomeScreen():
         usefulLinks_Screen(0,empty_string)
     elif (choice == "6"):
         importantLinks_Screen(0, empty_string)
-    elif(choice == "7"):
+    elif (choice == "7"):
         return
 
 
@@ -410,6 +412,8 @@ def learnSkill_Screen(name):
 
 #The screen after the user log in successfully
 def log_in_Screen(name):
+    check_requests(name)
+
     print()
     print("Select one of the below options:")
     print("(1) Post Job")
@@ -421,11 +425,12 @@ def log_in_Screen(name):
     print("(7) New Skill")
     print("(8) Useful links")
     print("(9) Important links")
-    print("(10) Sign Out")
+    print("(10) Search for friends to connect with")
+    print("(11) Sign Out")
     choice = input("Your selection: ")
 
     #check the right value of input from user
-    choice = check.check_option(choice,1,10)
+    choice = check.check_option(choice,1,11)
     
     if(choice == "1"): 
         manage = m.Manage()
@@ -441,14 +446,14 @@ def log_in_Screen(name):
         manage = m.Manage()
         manage.createProfile(name)
         choice = input("\nEnter 1 to return to previous screen: ")
-        #check the right value of input from user
+        #check that input has an acceptable value
         choice = check.check_option(choice,1,1)
         log_in_Screen(name)
     elif(choice == "5"):
         manage = m.Manage()
         manage.viewProfile(name)
         choice = input("\nEnter 1 to return to previous screen: ")
-        #check the right value of input from user
+        #check that input has an acceptable value
         choice = check.check_option(choice,1,1)
         log_in_Screen(name)
     elif (choice == "6"):
@@ -461,6 +466,9 @@ def log_in_Screen(name):
     elif(choice == "9"):
         importantLinks_Screen(1, name)
     elif(choice == "10"):
+        student_Search_Console(name)
+        log_in_Screen(name)
+    elif(choice == "11"):
         welcomeScreen()
 
 
@@ -505,7 +513,7 @@ def sign_up_Screen():
         print("(2) Do Not Sign Up. Come Back Home Screen!")
         choice = input("Your selection: ")
 
-        #check the right value of input from user
+        #check that user input has an acceptable value
         choice = check.check_option(choice,1,2)
 
         if(choice == "1"):
@@ -513,10 +521,9 @@ def sign_up_Screen():
         elif (choice == "2"):
             welcomeScreen()
     
-#The screen after choose find a friend from home screen
 def join_Incollege_Screen():
     manage = m.Manage()
-    #promp from the users for first and last name of their friend
+    #prompt the users for first and last name of their friend
     first = input("Enter first name of your friend: ")
     last = input("Enter last name of your friend: ")
     manage.find_people(first, last)
@@ -543,53 +550,129 @@ def join_Incollege_Screen():
         welcomeScreen()
 
 
-def student_search_console(num, name):
-    #display privacy policy 
+def student_Search_Console(sign_name):
     manage = m.Manage()
-    policy(num, name, "5")
+    sent = 0
+    choice = 0
 
-    if num == 0:
-        print("Sign in to search for friends")
-        print("(1) Go back to Important links")
-        choice = input("Your selection: ")
-
-        # check the right value of input from user
-        choice = check.check_option(choice, 1, 1)
-
-        if (choice == "1"):
-            importantLinks_Screen(num, name)
-
-    elif num == 1: #signed in user will be able to choose guest controls or change language
-        #helper variables
+    print()
+    while sent == 0:
         lines = list()
         results = list()
         entry = [" ", " ", " ", " "]
         blank = []
         count = 0
-
-        print()
-        print("Friend Search: Select one of the below options:")
+        print("Friend Search")
+        print("Select one of the below options:")
         print("(1) Search by Last Name")
         print("(2) Search by University")
         print("(3) Search by Major")
-        print("(4) Go back to previous screen: Important Links")
+        print("(4) Go back to previous screen: Log-in Screen")
         choice = input("Your selection: ")
-        # check the right value of input from user
+        # check that user provided acceptable input
         choice = check.check_option(choice, 1, 4)
 
         if (choice == "1"):
             lname = input("Enter Last Name: ")
-            results = manage.return_students_from_last(lname)
+            print()
+            names = list()
+            names = manage.return_unames_from_last(lname)
+            for uname in names:
+                partialResults = list()
+                partialResults = manage.return_students_from_uname(uname)
+                for entry in partialResults:
+                    results.append(entry)
             for row in results:
-                print(row[0] + " " + row[1] + " " + row[2] + " " + row[3])
+                print(row[0] + ": " + row[2] + " " + row[3])
+            manage.send_requests(sign_name, names)
         elif (choice == "2"):
-            #language(num, name)
-            count = count
+            univ = input("Enter University: ")
+            print()
+            univs = list()
+            names = manage.return_unames_from_univ(univ)
+            for uname in names:
+                partialResults = list()
+                partialResults = manage.return_students_from_uname(uname)
+                for entry in partialResults:
+                    results.append(entry)
+            for row in results:
+                print(row[0] + ": " + row[2] + " " + row[3])
+            manage.send_requests(sign_name, names)
         elif (choice == "3"):
-            #language(num, name)
-            count= count
+            major = input("Enter Major: ")
+            print()
+            majors = list()
+            names = manage.return_unames_from_major(major)
+            for uname in names:
+                partialResults = list()
+                partialResults = manage.return_students_from_uname(uname)
+                for entry in partialResults:
+                    results.append(entry)
+            for row in results:
+                print(row[0] + ": " + row[2] + " " + row[3])
+            manage.send_requests(sign_name, names)
         elif (choice == "4"):
-            importantLinks_Screen(num, name)
+            sent = 1
 
+def check_requests(sign_name):
+    manage = m.Manage()
+    blank = []
+    count = 0
+    count2 = 0
+    countReq = 0
+    addUser1 = list()
+    addUser2 = list()
+    superLines = list()
+    lines = list()
+    lines2 = list()
+    deleteLines = list()
 
+    with open(FILENAME_REQ, 'r') as readFile:  
+        reader2 = csv.reader(readFile)
+        for row2 in reader2:
+            if row2 != blank:
+                lines2.append(row2)
+                count2 = count2 + 1
+                if lines2[count2-1][1] == sign_name:
+                    countReq = countReq + 1
+                
+    if countReq > 0:
         
+        print("You have one or more pending friend requests. Do you wish to review them?")
+        print("Enter '1' if yes and '0' if no")
+        choice = input("Your selection: ")
+        # check that user provided acceptable input
+        choice = check.check_option(choice, 0, 1)
+        if choice == "1":
+            with open(FILENAME_REQ, 'r') as readFile:
+                reader = csv.reader(readFile)
+                for row in reader:
+                    if row != blank:
+                        if(row[1] != sign_name):
+                            superLines.append(row)
+
+            with open(FILENAME_REQ, 'r') as readFile:
+                reader = csv.reader(readFile)
+                for row in reader:
+                    if row != blank:
+                        lines.append(row)
+                        count = count + 1
+                        if lines[count-1][1] == sign_name:
+                            print()
+                            print("You have a pending friend request from " + lines[count-1][0])
+                            print("Do you accept it? Enter '1' for yes and '0' for no")
+                            accept = input("Your selection: ")
+                            accept = check.check_option(accept, 0, 1)
+                            if accept == "1":
+                                addUser1.append(sign_name)
+                                addUser2.append(lines[count-1][0])
+
+            i = 0
+            while i < len(addUser1):
+                manage.add_friend(addUser1[i], addUser2[i])
+                i = i + 1
+                
+            with open(FILENAME_REQ, "w") as writeFile:
+                writer = csv.writer(writeFile)
+                for line in superLines:
+                    writer.writerow(line)

@@ -18,6 +18,7 @@ FILENAME_JOB = "job_data.csv"
 FILENAME_STG = "settings.csv"
 FILENAME_PRO = "profiles.csv"
 FILENAME_FRI = "friends.csv"
+FILENAME_REQ = "requests.csv"
 
 class Manage:
     def __init__(self):
@@ -342,13 +343,14 @@ class Manage:
 
 
 
-    def add_friend(self, student1, student2, n):
+    def add_friend(self, student1, student2):
         with open(FILENAME_FRI,"a") as file:
             writer_csv = csv.writer(file)
-            writer_csv.writerow((student1.get_user_name(),student2.get_user_name()))
-            writer_csv.writerow((student2.get_user_name(),student1.get_user_name()))
+            writer_csv.writerow((student1,student2))
+            writer_csv.writerow((student2,student1))
 
-    def return_students_from_last(self, lname):
+
+    def return_students_from_uname(self, uname):
         blank = []
         count = 0
         lines = list()
@@ -360,9 +362,78 @@ class Manage:
                 if row != blank: #or else there will be too much empty space
                     lines.append(row)
                     count = count + 1
-                    if lines[count-1][3] == lname:
+                    if lines[count-1][0] == uname:
                         results.append(row)
             return results
+
+
+    def return_unames_from_last(self, lname):
+        blank = []
+        count = 0
+        lines = list()
+        names = list()
+        #read current students and fill 'lines' with relevant students
+        with open(FILENAME, 'r') as readFile:
+            reader = csv.reader(readFile)
+            for row in reader:
+                if row != blank: #or else there will be too much empty space
+                    lines.append(row)
+                    count = count + 1
+                    if lines[count-1][3] == lname:
+                        names.append(lines[count-1][0])
+            return names
+        
+    def return_unames_from_univ(self, univ):
+        blank = []
+        count = 0
+        lines = list()
+        names = list()
+        #read current students and fill 'lines' with relevant students
+        with open(FILENAME_PRO, 'r') as readFile:
+            reader = csv.reader(readFile)
+            for row in reader:
+                if row != blank: #or else there will be too much empty space
+                    lines.append(row)
+                    count = count + 1
+                    if lines[count-1][3] == univ:
+                        names.append(lines[count-1][0])
+            return names
+
+    def return_unames_from_major(self, major):
+        blank = []
+        count = 0
+        lines = list()
+        names = list()
+        #read current students and fill 'lines' with relevant students
+        with open(FILENAME_PRO, 'r') as readFile:
+            reader = csv.reader(readFile)
+            for row in reader:
+                if row != blank: #or else there will be too much empty space
+                    lines.append(row)
+                    count = count + 1
+                    if lines[count-1][2] == major:
+                        names.append(lines[count-1][0])
+            return names
+
+    def send_requests(self, sign_name, unames):
+        try:
+            unames.remove(sign_name)
+        except ValueError:
+            gar = 0
+        if (len(unames) == 0):
+            print("No students found")
+        else:
+            print("Enter '1' for yes and '0' for no.")
+            print("Do you wish to send a request to connect to:")
+            for uname in unames:
+                choice = input(uname + "?: ")
+                choice = check.check_option(choice, 0, 1)
+                if(choice == "1"):
+                    with open(FILENAME_REQ,"a") as file:
+                        writer_csv = csv.writer(file)
+                        writer_csv.writerow((sign_name, uname))  
+                    print("Request to connect sent")
+
 
 def valiDate(date_text):
     try:
