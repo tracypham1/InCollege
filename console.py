@@ -20,6 +20,10 @@ def welcomeScreen():
         for line in file:
             print(line, end="")
             print()
+    if(not os.path.exists("requests.csv")):
+        open("requests.csv", 'w').close()
+    if(not os.path.exists("friends.csv")):
+        open("friends.csv", 'w').close()
     print()
     print("Select one of the below options:\n")
     print("(1) Log-in to an existing account") #log-in
@@ -412,6 +416,7 @@ def learnSkill_Screen(name):
 
 #The screen after the user log in successfully
 def log_in_Screen(name):
+    
     check_requests(name)
 
     print()
@@ -421,11 +426,11 @@ def log_in_Screen(name):
     print("(3) Join Friend")
     print("(4) Create Profile")
     print("(5) View Profile")
-    print("(6) Display friends profile")
-    print("(7) New Skill")
-    print("(8) Useful links")
-    print("(9) Important links")
-    print("(10) Search for friends to connect with")
+    print("(6) Search for friends to connect with")
+    print("(7) Show my network")
+    print("(8) New Skill")
+    print("(9) Useful links")
+    print("(10) Important links")
     print("(11) Sign Out")
     choice = input("Your selection: ")
 
@@ -456,50 +461,20 @@ def log_in_Screen(name):
         #check that input has an acceptable value
         choice = check.check_option(choice,1,1)
         log_in_Screen(name)
-    elif (choice == "6"):
-        friend_Screen(name)
-        log_in_Screen(name)
-    elif(choice == "7"):
-        learnSkill_Screen(name)
-    elif(choice == "8"):
-        usefulLinks_Screen(1,name)
-    elif(choice == "9"):
-        importantLinks_Screen(1, name)
-    elif(choice == "10"):
+    elif(choice == "6"):
         student_Search_Console(name)
-        log_in_Screen(name)
+        log_in_Screen(name)    
+    elif (choice == "7"):
+        show_Network(name)
+    elif(choice == "8"):
+        learnSkill_Screen(name)
+    elif(choice == "9"):
+        usefulLinks_Screen(1,name)
+    elif(choice == "10"):
+        importantLinks_Screen(1, name)
+    
     elif(choice == "11"):
         welcomeScreen()
-
-
-
-def friend_Screen(name):
-    print("Here is a list of your friends:")
-    print("Type in the first and last name of your friend to view their profile:")
-    first_name_orig = input('Enter the first name:')
-    last_name_orig = input('Enter the last name:')
-    entire_name = first_name_orig + last_name_orig
-    f = open("student_data.csv", "r")
-    val = 1
-    for x in f:
-
-        if val == 0:
-            val = 1
-        else:
-            list = x.split(",")
-            first_name = list[2]
-            last_name = list[3]
-            last_name = last_name.rstrip()
-            if first_name_orig == first_name and last_name_orig == last_name:
-                print("username is: " + list[0])
-                username = list[0]
-                manage = m.Manage()
-                manage.viewProfile(username)
-            val = 0
-    list.clear()
-
-    f.close()
-
 
 def sign_up_Screen():
     manage = m.Manage()
@@ -557,11 +532,8 @@ def student_Search_Console(sign_name):
 
     print()
     while sent == 0:
-        lines = list()
         results = list()
         entry = [" ", " ", " ", " "]
-        blank = []
-        count = 0
         print("Friend Search")
         print("Select one of the below options:")
         print("(1) Search by Last Name")
@@ -588,7 +560,6 @@ def student_Search_Console(sign_name):
         elif (choice == "2"):
             univ = input("Enter University: ")
             print()
-            univs = list()
             names = manage.return_unames_from_univ(univ)
             for uname in names:
                 partialResults = list()
@@ -601,7 +572,6 @@ def student_Search_Console(sign_name):
         elif (choice == "3"):
             major = input("Enter Major: ")
             print()
-            majors = list()
             names = manage.return_unames_from_major(major)
             for uname in names:
                 partialResults = list()
@@ -625,7 +595,6 @@ def check_requests(sign_name):
     superLines = list()
     lines = list()
     lines2 = list()
-    deleteLines = list()
 
     with open(FILENAME_REQ, 'r') as readFile:  
         reader2 = csv.reader(readFile)
@@ -676,3 +645,201 @@ def check_requests(sign_name):
                 writer = csv.writer(writeFile)
                 for line in superLines:
                     writer.writerow(line)
+                
+############################## Show Network console ##################################
+
+def show_Network(name):
+    print()
+    print("Select one of the below options:")
+    print("(1) Check Friend Requests")
+    print("(2) Show Friends List")
+    print("(3) Display Friend Profile")
+    print("(3) Remove Friend")
+    print("(4) Return to Main Menu")
+    choice = input("Your selection: ")
+    print()
+
+    if(choice == "1"):
+        show_Requests(name)
+    elif (choice == "2"):
+        friend_List(name)
+    elif (choice == "3"):
+        display_Friend(name)
+    elif (choice == "4"):
+        remove_Friend(name)
+    elif (choice == "5"):
+        log_in_Screen(name)
+
+def show_Requests(name):
+    blank = []
+    count2 = 0
+    countReq = 0
+    lines2 = list()
+
+    with open(FILENAME_REQ, 'r') as readFile:  
+        reader2 = csv.reader(readFile)
+        for row2 in reader2:
+            if row2 != blank:
+                lines2.append(row2)
+                count2 = count2 + 1
+                if lines2[count2-1][1] == name:
+                    countReq = countReq + 1
+    print()
+    if countReq == 0:
+        print("No Pending Friend Requests")
+    elif countReq > 0:
+        print("Your pending friend requests are: ")
+        with open('requests.csv', newline='') as f:
+            reqReader = csv.reader(f)
+            data = list(reqReader)
+        with open('student_data.csv', newline='') as g:
+            userReader = csv.reader(g)
+            usernames = list(userReader)
+        for request in data:    #checks all requests
+            if name in request: #if user is found in a request
+                index = request.index(name)    
+                if index==0:
+                    friend=1
+                elif index==1:
+                    friend=0
+                uname=request[friend]
+                num = -1
+                for i in usernames:
+                    num = num + 1
+                    if(num%2==0):
+                        if i[0]==uname:
+                            print(i[2]+' '+i[3])
+                            break
+    show_Network(name)
+    
+    
+def friend_List(name):
+    with open(FILENAME_FRI, 'r') as my_file:
+        is_blank = len(my_file.read().strip())
+    if is_blank == 0:
+        print("You currently do not have anyone added to your friends list.")
+        log_in_Screen(name)
+    else:
+        with open('student_data.csv', newline='') as g:
+            userReader = csv.reader(g)
+            usernames = list(userReader)
+        print("Your friends are: ")
+        with open(FILENAME_FRI, newline='') as f:
+            friReader = csv.reader(f)
+            data = list(friReader)
+        for user in data:    #checks all friends
+            if name in user: #if user is found in a friend pairing
+                index = user.index(name)    
+                if index==0:
+                    friend=1
+                    uname=user[friend]
+                    num = -1
+                    for i in usernames: #searches through student data for first and last name
+                        num = num + 1
+                        if(num%2==0):
+                            if i[0]==uname:
+                                print(i[2]+' '+i[3])
+                                break
+        show_Network(name)
+
+
+def remove_Friend(name):
+
+    with open(FILENAME_FRI, 'r') as my_file:
+        is_blank = len(my_file.read().strip())
+    if is_blank == 0:
+        print("You currently do not have anyone added to your friends list.")
+        log_in_Screen(name)
+    else:
+        username=''
+        with open(FILENAME_STD, newline='') as g:       #finds the username of the friend they want removed
+            userReader = csv.reader(g)
+            data = list(userReader)
+        removeFirst = input("What is the first name of the person you would like to remove? ")
+        removeLast = input("What is the last name? ")
+        num = -1
+        for user in data:
+            num = num + 1
+            if(num%2==0):
+                if(user[2]==removeFirst and user[3]==removeLast):
+                    username = user[0]                 #username of the student
+        if(username==''):
+            print("User not found. Try again. ")
+            remove_Friend(name)
+        with open(FILENAME_FRI, newline='') as f:
+            friReader = csv.reader(f)
+            friends = list(friReader)      
+
+        with open(FILENAME_FRI,"w",newline="") as f:
+            writer=csv.writer(f)
+            num = -1    
+            for pair in friends:
+                num = num + 1
+                if(num%2==0):
+                    if (pair[0]==name and pair[1]==username) or (pair[0]==username and pair[1]==name):
+                        continue
+                    else:
+                        writer.writerow((pair[0],pair[1]))
+                        writer.writerow("")
+        print("Removed Friend. ")
+        show_Network(name)
+
+def display_Friend(name):
+    username=''
+    
+    with open(FILENAME_FRI, 'r') as my_file:
+        is_blank = len(my_file.read().strip())
+    if is_blank == 0:
+        print("You currently do not have anyone added to your friends list.")
+        log_in_Screen(name)
+    else:
+        with open('student_data.csv', newline='') as g:
+            userReader = csv.reader(g)
+            usernames = list(userReader)
+        print("Your friends are: ")
+        with open(FILENAME_FRI, newline='') as f:
+            friReader = csv.reader(f)
+            data = list(friReader)
+        for user in data:    #checks all friends
+            if name in user: #if user is found in a friend pairing
+                index = user.index(name)    
+                if index==0:
+                    friend=1
+                    uname=user[friend]
+                    num = -1
+                    for i in usernames: #searches through student data for first and last name
+                        num = num + 1
+                        if(num%2==0):
+                            if i[0]==uname:
+                                print(i[2]+' '+i[3])
+                                break
+
+                            
+    print("Type in the first and last name of your friend to view their profile:")
+    first_name_orig = input('Enter the first name: ')
+    last_name_orig = input('Enter the last name: ')
+
+    with open(FILENAME_STD, newline='') as g:       #finds the username of the friend 
+        userReader = csv.reader(g)
+        data = list(userReader)
+    num = -1
+    for user in data:
+        num = num + 1
+        if(num%2==0):
+            if(user[2]==first_name_orig and user[3]==last_name_orig):
+                username = user[0]                 
+    if(username==''):
+        print("User not found. Try again. ")
+        display_Friend(name)
+
+    manage = m.Manage()
+    manage.viewProfile(username)  
+    g.close()
+    show_Network(name)
+
+
+    
+
+
+
+################## End of show network console ###################################
