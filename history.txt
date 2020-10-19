@@ -1,0 +1,47 @@
+commit d324a7a29b63e84a7cecdda873ee5599a646ed26
+Author: Thinh Phung <thinhphung@usf.edu>
+Date:   Sun Oct 18 20:19:19 2020 -0400
+
+    Sunday Commit -- adding test_searchFriends_requests.py
+
+commit d4b001cdd2ac09be019089665770883fd9fde194
+Author: Thinh Phung <thinhphung@usf.edu>
+Date:   Sat Oct 17 23:29:10 2020 -0400
+
+    Saturday Commit
+
+commit 4b5c7ccc58aa3f3f429ec61e5f008650cfa76bfc
+Author: Thinh Phung <thinhphung@usf.edu>
+Date:   Fri Oct 16 21:22:07 2020 -0400
+
+    Friday Commit -- Disconnecting from friend - display the profile
+
+commit 87647835fd6dd09f962cc5c98000ccf0cf36a7ab
+Author: Thinh Phung <thinhphung@usf.edu>
+Date:   Thu Oct 15 23:57:17 2020 -0400
+
+    Thursday Commit 2 -- modify accept/reject request
+
+commit 4a959a79840d776773876d8c012984951773bdbe
+Author: Thinh Phung <thinhphung@usf.edu>
+Date:   Thu Oct 15 23:40:35 2020 -0400
+
+    Thursday Commit - search friends and create accept/reject request
+
+commit a9a8befc6f154a3f9b8d301ac7aafd8008c97a9b
+Author: Thinh Phung <thinhphung@usf.edu>
+Date:   Wed Oct 14 23:40:26 2020 -0400
+
+    Wednesday Commit - add friend() function
+
+commit 27879eb95fc613343a2f6aeeb3eec3d3e438302e
+Author: Thinh Phung <thinhphung@usf.edu>
+Date:   Tue Oct 13 20:40:33 2020 -0400
+
+    Tuesday Commit
+
+commit 7dbecb05d6660e90dfd690eb4f34276d96029349
+Author: Thinh Phung <thinhphung@usf.edu>
+Date:   Mon Oct 12 22:52:45 2020 -0400
+
+    add all files from epic4
