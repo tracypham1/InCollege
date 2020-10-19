@@ -11,11 +11,14 @@ import check
 import job as j
 import settings as stg
 import profiles as pro
+from datetime import datetime
 
 FILENAME = "student_data.csv"
 FILENAME_JOB = "job_data.csv"
 FILENAME_STG = "settings.csv"
 FILENAME_PRO = "profiles.csv"
+FILENAME_FRI = "friends.csv"
+FILENAME_REQ = "requests.csv"
 
 class Manage:
     def __init__(self):
@@ -31,6 +34,7 @@ class Manage:
         if not os.path.isfile(FILENAME):
             with open(FILENAME,"w") as file:
                 writer_csv = csv.writer(file)
+                writer_csv.writerow(("User_Name","Password","First_Name","Last_Name"))
 
         #add data from student_data.csv to __self.__list_student
         with open(FILENAME,"r") as file:
@@ -95,7 +99,7 @@ class Manage:
                 print("Try again!")
                 return None #It is easier for pytest
        
-        if len(self.__list_student) < 5:
+        if len(self.__list_student) < 11:
             self.__list_student.append(student)
             user_name = student.get_user_name()
             print("\nCongratulate",student.get_name(), "\nYou signed up and logged in successfully!")
@@ -122,7 +126,7 @@ class Manage:
         manage = Manage()
         
         #when the student_data.csv file doesn't have any user's record
-        if len(manage.get_list()) == 1:
+        if len(manage.get_list()) == 0:
             print("\nDon't have any account in System")
             print("You have to sign up for a new account!\n")
             return None 
@@ -188,6 +192,8 @@ class Manage:
         
         print("\nThey are not yet a part of the InCollege system yet")
         return None
+
+
 
 
     def add_job(self, job, n):
@@ -262,11 +268,19 @@ class Manage:
             for x in range(3):
                 expTitle = input("Job Title: ")
                 expEmployer = input("Employer: ")
-                expDateSt = input("Date Started MM/DD/YY: ")
-                expDateEnd = input("Date Ended MM/DD/YY: ")
+                expDateSt = input("Date Started MM/DD/YYYY: ")
+                while(valiDate(expDateSt)==False):
+                    expDateSt = input("Date not valid. Try Again: ")
+                expDateEnd = input("Date Ended MM/DD/YYYY: ")
+                while(valiDate(expDateEnd)==False or compareDates(expDateSt, expDateEnd)==False):
+                    if(valiDate(expDateEnd)==False):
+                        expDateEnd = input("Date not valid. Try Again: ")
+                    elif(compareDates(expDateSt, expDateEnd)==False):
+                        expDateEnd = input("Date is before start date. Try Again: ")
+
                 expLocation = input("Job Location: ")
-                expTitle = input("Job Description: ")
-                experience = experience + "(" + expTitle + "," + expEmployer + "," + expDateSt + "," + expDateEnd + "," + expLocation + "," + expTitle + ")"
+                expDesc = input("Job Description: ")
+                experience = experience + "(" + expTitle + "," + expEmployer + "," + expDateSt + "," + expDateEnd + "," + expLocation + "," + expDesc + ")"
                 if(x<2):
                     another = input("Do you have more experience to add? (Yes/No)  ")
                     while another.upper()!="YES" and another.upper()!="NO":
@@ -284,15 +298,174 @@ class Manage:
             writer_csv.writerow((name, title, major, university, bio, experience, education))
 
 
-    def viewProfile(self):
-        return 0
+    def viewProfile(self, name):
+        with open(FILENAME_PRO,"r") as file:
+            reader_csv = csv.reader(file)
+            for row in reader_csv:
+                if row != [] and row[0] == name:
+                    print()
+                    for element in self.__list_student:
+                        if element.get_user_name() == name:
+                            print(element.get_name())
+                    print("Title: " + row[1])
+                    print("Major: " + row[2])
+                    print("University Name: " + row[3])
+                    print("About me: " + row[4])
+                    experience = row[5]
+                    list_experience = experience.split(")")
+                    list_experience.pop()
+                    print()
+                    for element in list_experience:
+                        sub_element = element[1:]
+                        list_sub_experience = sub_element.split(",")
+                        print("Title: " + list_sub_experience[0])
+                        print("Job Description: " + list_sub_experience[5])
+                        print("Place of work: " + list_sub_experience[4])
+                        print("Start date: " + list_sub_experience[2])
+                        print("End date: " + list_sub_experience[3])
+                        print("Employer: " + list_sub_experience[1])
+                        print()
+                    print("Education information")
+                    education = row[6]
+                    len_education = len(education) - 1
+                    sub_education = education[1:len_education]
+                    
+                    list_sub_education = sub_education.split(",")
+                    print("University: " + list_sub_education[0])
+                    print("Major: " + list_sub_education[1])
+                    print("Years so far: " + list_sub_education[2])
+                    return name
+                
+                
+        print()
+        print("This user did not create a profile!")
+        return name
 
+
+
+    def add_friend(self, student1, student2):
+        with open(FILENAME_FRI,"a") as file:
+            writer_csv = csv.writer(file)
+            writer_csv.writerow((student1,student2))
+            writer_csv.writerow((student2,student1))
+
+
+    def return_students_from_uname(self, uname):
+        blank = []
+        count = 0
+        lines = list()
+        results = list()
+        #read current students and fill 'lines' with relevant students
+        with open(FILENAME, 'r') as readFile:
+            reader = csv.reader(readFile)
+            for row in reader:
+                if row != blank: #or else there will be too much empty space
+                    lines.append(row)
+                    count = count + 1
+                    if lines[count-1][0] == uname:
+                        results.append(row)
+            return results
+
+
+    def return_unames_from_last(self, lname):
+        blank = []
+        count = 0
+        lines = list()
+        names = list()
+        #read current students and fill 'lines' with relevant students
+        with open(FILENAME, 'r') as readFile:
+            reader = csv.reader(readFile)
+            for row in reader:
+                if row != blank: #or else there will be too much empty space
+                    lines.append(row)
+                    count = count + 1
+                    if lines[count-1][3] == lname:
+                        names.append(lines[count-1][0])
+            return names
         
+    def return_unames_from_univ(self, univ):
+        blank = []
+        count = 0
+        lines = list()
+        names = list()
+        #read current students and fill 'lines' with relevant students
+        with open(FILENAME_PRO, 'r') as readFile:
+            reader = csv.reader(readFile)
+            for row in reader:
+                if row != blank: #or else there will be too much empty space
+                    lines.append(row)
+                    count = count + 1
+                    if lines[count-1][3] == univ:
+                        names.append(lines[count-1][0])
+            return names
+
+    def return_unames_from_major(self, major):
+        blank = []
+        count = 0
+        lines = list()
+        names = list()
+        #read current students and fill 'lines' with relevant students
+        with open(FILENAME_PRO, 'r') as readFile:
+            reader = csv.reader(readFile)
+            for row in reader:
+                if row != blank: #or else there will be too much empty space
+                    lines.append(row)
+                    count = count + 1
+                    if lines[count-1][2] == major:
+                        names.append(lines[count-1][0])
+            return names
+
+    def send_requests(self, sign_name, unames):
+        blank = []
+        try:
+            unames.remove(sign_name)
+        except ValueError:
+            gar = 0
+        if (len(unames) == 0):
+            print("No students found")
+            print()
+        else:
+            duplicates = 0
+            print("Enter '1' for yes and '0' for no.")
+            print("Do you wish to send a request to connect to:")
+            for uname in unames:
+                choice = input(uname + "?: ")
+                choice = check.check_option(choice, 0, 1)
+                if(choice == "1"):
+                    with open(FILENAME_REQ, 'r') as readFile:  
+                        reader = csv.reader(readFile)
+                        for row in reader:
+                            if row != blank:
+                                if row[0] == sign_name and row[1] == uname:
+                                    duplicates = duplicates + 1
+
+                    with open(FILENAME_FRI, 'r') as readFile2:  
+                        reader2 = csv.reader(readFile2)
+                        for row in reader2:
+                            if row != blank:
+                                if row[0] == sign_name and row[1] == uname:
+                                    duplicates = duplicates + 1
+
+                    if duplicates == 0:
+                        with open(FILENAME_REQ,"a") as file:
+                            writer_csv = csv.writer(file)
+                            writer_csv.writerow((sign_name, uname))  
+                        print("Request to connect sent")
+                    else:
+                        print("Friend request has already been sent or accepted")
 
 
+def valiDate(date_text):
+    try:
+        datetime.strptime(date_text, '%m/%d/%Y')
+        return True
+    except ValueError:
+        return False
 
-
-
+def compareDates(date1, date2):
+    d1 = datetime.strptime(date1, '%m/%d/%Y')
+    d2 = datetime.strptime(date2, '%m/%d/%Y')
+    return d1<d2
 
 
 
