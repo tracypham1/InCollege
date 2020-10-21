@@ -13,6 +13,7 @@ FILENAME_REQ = "requests.csv"
 STORY = "success_story.txt"
 empty_string = " "
 
+
 #The screen is at the begin of the program, or after its options finish (log-in, sign up)
 def welcomeScreen():
     #read the data from a text file
