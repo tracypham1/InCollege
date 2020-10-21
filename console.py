@@ -4,6 +4,7 @@ import csv
 import os.path
 
 FILENAME_STD = "student_data.csv"
+FILENAME_JOB = "job_data.csv"
 FILENAME_STG = "settings.csv"
 FILENAME_POL = "policy.csv"
 FILENAME_PRO = "profiles.csv"
@@ -441,8 +442,7 @@ def log_in_Screen(name):
         manage.new_job(name)
         log_in_Screen(name)
     elif(choice == "2"):
-        print("\nUnder Construction")
-        log_in_Screen(name)
+        job_Screen(name)
     elif(choice == "3"):
         manage = m.Manage()
         manage.createProfile(name)
@@ -468,7 +468,6 @@ def log_in_Screen(name):
         usefulLinks_Screen(1,name)
     elif(choice == "9"):
         importantLinks_Screen(1, name)
-    
     elif(choice == "10"):
         welcomeScreen()
 
@@ -502,7 +501,7 @@ def join_Incollege_Screen():
     print("Select one of the below options:")
     print("(1) Log in")
     print("(2) Sign up")
-    print("(3) Come Back Home Screen!")
+    print("(3) Go back to Home Screen")
     choice = input("Your selection: ")
 
     #check the right value of input from user
@@ -834,8 +833,60 @@ def display_Friend(name):
     show_Network(name)
 
 
-    
 
 
 
 ################## End of show network console ###################################
+
+
+
+
+
+
+
+
+              
+############################## Show and Apply for Jobs Console ##################################
+
+def job_Screen(name):
+    manage = m.Manage()
+    jobs = list()
+    print("The following jobs are currently in the system:");
+    with open(FILENAME_JOB,"r") as file:
+        reader_csv = csv.reader(file)
+        i = 0;
+        for row in reader_csv:
+            if row != []:
+                i = i + 1;
+                jobs.append(row);
+                print(str(i) + ": " + row[0]);
+        job_num = len(jobs);
+    choice = job_num + 1;
+    choice_B = 0;
+    while(choice != "0"):
+        print("Enter the number of the job you would like to view (and if you wish, save or apply to), or enter '0' to go back");
+        choice = input("Your selection: ")
+        #check that acceptable input was provided by the user
+        choice = check.check_option(choice,0,job_num);
+
+        if(choice != "0"):
+            print(jobs[int(choice)-1][0]);
+            print("Employer: " + jobs[int(choice)-1][2]);
+            print("Location: " + jobs[int(choice)-1][3]);
+            print("Salary: " + jobs[int(choice)-1][4]);
+            print("Description: " + jobs[int(choice)-1][1]);
+            print();
+            print("Enter '1' to apply for this job, '2' to save it, or '3' to look at a different job");
+            choice_B = input("Your selection: ");
+            choice_B = check.check_option(choice_B,1,3);
+            if (choice_B == "1"): #Application
+                print("Under Construction")
+            elif (choice_B == "2"): #Save
+                print("Under Construction");
+
+    log_in_Screen(name)
+
+
+############################## End of Show and Apply for Jobs Console ##################################
+
+         
