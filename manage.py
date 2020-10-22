@@ -11,6 +11,7 @@ import check
 import job as j
 import settings as stg
 import profiles as pro
+import save as sa
 from datetime import datetime
 
 FILENAME = "student_data.csv"
@@ -19,6 +20,8 @@ FILENAME_STG = "settings.csv"
 FILENAME_PRO = "profiles.csv"
 FILENAME_FRI = "friends.csv"
 FILENAME_REQ = "requests.csv"
+FILENAME_APP = "applications.csv"
+FILENAME_SAVE_JOB ="save_job.csv"
 
 class Manage:
     def __init__(self):
@@ -29,6 +32,32 @@ class Manage:
         self.__list_job = []
         self.__list_settings = []
         self.__list_profiles = []
+
+        ######################################### begin - Thinh #############################
+        
+        self.__list_save_job = []
+        
+
+        if not os.path.isfile(FILENAME_SAVE_JOB):
+            with open(FILENAME_SAVE_JOB,"w") as file:
+                writer_csv = csv.writer(file)
+                writer_csv.writerow(("User_Name","Title"))
+
+       
+        with open(FILENAME_SAVE_JOB,"r") as file:
+            reader_csv = csv.reader(file)
+            for row in reader_csv:
+                if row != []:
+                    self.__list_save_job.append(sa.Save(row[0], row[1]))
+
+        if not os.path.isfile(FILENAME_APP):
+            with open(FILENAME_APP,"w") as file:
+                writer_csv = csv.writer(file)
+                #writer_csv.writerow(("User_Name","Title","About"))
+
+        
+
+        ######################################## end - Thinh ######################################
 
         #add title for the student_data.csv
         if not os.path.isfile(FILENAME):
@@ -82,6 +111,7 @@ class Manage:
             for row in reader_csv:
                 if row != []:
                     self.__list_profiles.append(pro.Profiles(row[0], row[1], row[2], row[3], row[4], row[5], row[6]))
+
     
     def get_list(self):
         return self.__list_student
@@ -89,6 +119,94 @@ class Manage:
     
     def get_length(self):
         return len(self.__list_student)
+
+
+    ####################### begin - job - Thinh ###################
+
+    def add_save_job(self,username,title):
+
+        list_application = [] #keep title of applications of the user
+        with open (FILENAME_APP, "r") as file:
+            reader_csv = csv.reader(file)
+            for row in reader_csv:
+                if row != [] and row [0] == username:
+                    list_application.append(row[1])
+        
+        for element in list_application:
+            if element == title:
+                print("You have already applied to this job! Don't need to save the job!")
+                return False
+        
+        for element in self.__list_save_job:
+            if element.get_username() == username and element.get_title() == title:
+                print("This job existed in your data. Please choose another job!")
+                return False
+
+        self.__list_save_job.append(sa.Save(username,title))
+        
+        with open(FILENAME_SAVE_JOB,"a") as file:
+            writer_csv = csv.writer(file)
+            writer_csv.writerow((username,title))
+        print("The job is saved!")
+
+        return True
+
+    def list_save_job(self,name):
+        list_save_job = []
+        with open(FILENAME_SAVE_JOB,"r") as file:
+            reader_csv = csv.reader(file)
+            for row in reader_csv:
+                if row != [] and row[0] == name:
+                    list_save_job.append(row[1])
+                    
+        return list_save_job
+
+    def delete_job(self, name):
+        title = ""
+        self.__list_job.clear()
+        with open (FILENAME_JOB, "r") as file:
+            reader_csv = csv.reader(file)
+            for row in reader_csv:
+                if row != [] and row [5] == name:
+                    title  = row[0] #get title from username who post a job
+                if row != [] and row [5] != name:
+                    self.__list_job.append(j.Job(row[0],row[1],row[2],row[3],row[4],row[5]))
+
+        with open (FILENAME_JOB, "w") as file:
+            writer_csv = csv.writer(file)
+            for element in self.__list_job:
+                writer_csv.writerow((element.get_title(),element.get_description(),element.get_employer(),element.get_location(),element.get_salary(), element.get_post_name()))
+
+        #should delete the rows in save_job.csv that relative to the job deleted
+        print(title)
+        self.__list_save_job.clear()
+        with open (FILENAME_SAVE_JOB, "r") as file:
+            reader_csv = csv.reader(file)
+            for row in reader_csv:
+                if row != [] and row [1] != title:
+                    self.__list_save_job.append(sa.Save(row[0],row[1]))
+
+        with open (FILENAME_SAVE_JOB, "w") as file:
+            writer_csv = csv.writer(file)
+            for element in self.__list_save_job:
+                writer_csv.writerow((element.get_username(), element.get_title()))
+
+    def delete_save_job(self, name, title):
+        self.__list_save_job.clear()
+        with open (FILENAME_SAVE_JOB, "r") as file:
+            reader_csv = csv.reader(file)
+            for row in reader_csv:
+                if row != [] and (row [0] != name or row[1] != title):
+                    self.__list_save_job.append(sa.Save(row[0],row[1]))
+
+        with open (FILENAME_SAVE_JOB, "w") as file:
+            writer_csv = csv.writer(file)
+            for element in self.__list_save_job:
+                writer_csv.writerow((element.get_username(),element.get_title()))
+
+
+
+    ####################### end - job - Thinh ##################################################
 
             
     # add a new object student with given first, last name and password to student_data.csv file 
@@ -197,8 +315,8 @@ class Manage:
 
 
     def add_job(self, job, n):
-        if len(self.__list_job) >= 5:
-            print("You cannot post more job! Limit 5!")
+        if len(self.__list_job) > 10:
+            print("You cannot post more jobs! Limit of 10!")
             return None
 
         else:
@@ -454,6 +572,20 @@ class Manage:
                     else:
                         print("Friend request has already been sent or accepted")
 
+    def add_application(self, studentUserName, jobTitle, jobEmployer):
+        gradDate = input("Your Graduation Date(MM/DD/YYYY): ")
+        while(valiDate(gradDate)==False):
+            gradDate = input("Date not valid. Try Again: ")
+        startDate = input("The Date when you can start working (MM/DD/YYYY): ")
+        while(valiDate(startDate)==False):
+            startDate = input("Date not valid. Try Again: ")
+        paragraph = input("Enter a paragraph of text explaining why you think that you would be a good fit for this job: ")
+        with open(FILENAME_APP,"a") as file:
+            writer_csv = csv.writer(file)
+            writer_csv.writerow((studentUserName, jobTitle, jobEmployer, gradDate, startDate, paragraph))
+
+
+            
 
 def valiDate(date_text):
     try:
