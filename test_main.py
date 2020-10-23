@@ -4,13 +4,75 @@ import check as ch
 import manage as ma
 import student as st
 import job as jo
+import save as s
 import random
 from random import choice
 import string
 import csv
 
 
+
+
+
+
 class TestClass:
+
+
+
+    def test_Jobs(self):             #adds jobs so I can test the addition
+        filename = "job_data.csv"
+        f = open(filename, "w+")
+        f.close()
+        manage = ma.Manage()
+        job1 = jo.Job("Porter", "TransportsItems", "Bridges", "UCA", "10", "TP1")
+        assert manage.add_job(job1, "TP1") == job1.get_post_name()
+        job2 = jo.Job("Developer", "WritesCode", "USF", "FL", "20", "TP2")
+        assert manage.add_job(job2, "TP2") == job2.get_post_name()
+        job3 = jo.Job("Tester1", "Tests", "USF", "FL", "20", "DP")
+        assert manage.add_job(job3, "DP") == job3.get_post_name()
+        job4 = jo.Job("Tester2", "Tests", "USF", "FL", "20", "KP")
+        assert manage.add_job(job4, "KP") == job4.get_post_name()
+        job5 = jo.Job("SCRUMMaster", "ManagesSCRUM", "USF", "FL", "30", "YQ")
+        assert manage.add_job(job5, "YQ") == job5.get_post_name()
+        job6 = jo.Job("Sixth", "6th test", "Bridges", "UCA", "10", "TP1")
+        assert manage.add_job(job6, "TP1") == job6.get_post_name()
+        job7 = jo.Job("Seventh", "7th test", "USF", "FL", "20", "TP2")
+        assert manage.add_job(job7, "TP2") == job7.get_post_name()
+        job8 = jo.Job("Eighth", "8th test", "USF", "FL", "20", "DP")
+        assert manage.add_job(job8, "DP") == job8.get_post_name()
+        job9 = jo.Job("Nineth", "9th test", "USF", "FL", "20", "KP")
+        assert manage.add_job(job9, "KP") == job9.get_post_name()
+        job10 = jo.Job("Tenth", "10th test", "USF", "FL", "30", "YQ")
+        assert manage.add_job(job10, "YQ") == job10.get_post_name()
+        job11 = jo.Job("Error", "TransportsItems", "Bridges", "UCA", "10", "TP1")
+        assert manage.add_job(job11, "TP1") == None
+
+    def test_save_job(self):                    #tests the saving of jobs
+        filename = "save_job.csv"
+        f = open(filename, "w+")
+        f.close()
+        manage = ma.Manage()
+        save_job1 = s.Save("YQ","Tenth")
+        manage.add_save_job("YQ", "Tenth")
+        assert save_job1.get_username() == "YQ"
+        save_job2 = s.Save("TP1", "Porter")
+        manage.add_save_job("TP1", "Porter")
+        assert save_job2.get_username() == "TP1"
+        save_job3 = s.Save("TP2", "Developer")
+        manage.add_save_job("TP2", "Developer")
+        assert save_job3.get_username() == "TP2"
+        save_job4 = s.Save("TP1", "Sixth")
+        manage.add_save_job("TP1", "Sixth")
+        assert save_job4.get_username() == "TP1"
+        save_job5 = s.Save("TP2", "Seventh")
+        manage.add_save_job("TP2", "Seventh")
+        assert save_job5.get_username() == "TP2"
+        save_job6 = s.Save("YQ", "SCRUMMaster")
+        manage.add_save_job("YQ", "SCRUMMaster")
+        assert save_job6.get_username() == "YQ"
+
+
+
     def test_importantLinks(self):             #adds students to test the creation of default setting values
         filename = "settings.csv"
         f = open(filename, "w+")
@@ -156,21 +218,6 @@ class TestClass:
         assert ("on" == entry[3])
         assert ("English" == entry[4])
 
-    def test_Jobs(self):             #adds jobs so I can test the addition
-        filename = "job_data.csv"
-        f = open(filename, "w+")
-        f.close()
-        manage = ma.Manage()
-        job1 = jo.Job("Porter", "TransportsItems", "Bridges", "UCA", "10", "TP1")
-        assert manage.add_job(job1, "TP1") == job1.get_post_name()
-        job2 = jo.Job("Developer", "WritesCode", "USF", "FL", "20", "TP2")
-        assert manage.add_job(job2, "TP2") == job2.get_post_name()
-        job3 = jo.Job("Tester1", "Tests", "USF", "FL", "20", "DP")
-        assert manage.add_job(job3, "DP") == job3.get_post_name()
-        job4 = jo.Job("Tester2", "Tests", "USF", "FL", "20", "KP")
-        assert manage.add_job(job4, "KP") == job4.get_post_name()
-        job5 = jo.Job("SCRUMMaster", "ManagesSCRUM", "USF", "FL", "30", "YQ")
-        assert manage.add_job(job5, "YQ") == job5.get_post_name()
 
     def test_passwordLength(self):
         correct = random.randint(8, 12)
