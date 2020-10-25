@@ -31,10 +31,7 @@ class Manage:
         self.__list_student = []
         self.__list_job = []
         self.__list_settings = []
-        self.__list_profiles = []
-
-        ######################################### begin - Thinh #############################
-        
+        self.__list_profiles = []        
         self.__list_save_job = []
         
 
@@ -53,11 +50,6 @@ class Manage:
         if not os.path.isfile(FILENAME_APP):
             with open(FILENAME_APP,"w") as file:
                 writer_csv = csv.writer(file)
-                #writer_csv.writerow(("User_Name","Title","About"))
-
-        
-
-        ######################################## end - Thinh ######################################
 
         #add title for the student_data.csv
         if not os.path.isfile(FILENAME):
@@ -119,10 +111,11 @@ class Manage:
     
     def get_length(self):
         return len(self.__list_student)
-
-
-    ####################### begin - job - Thinh ###################
-
+    
+    def get_list_job (self):
+        return self.__list_job
+    
+    # Add a saved_job in save_date.csv
     def add_save_job(self,username,title):
 
         list_application = [] #keep title of applications of the user
@@ -161,15 +154,12 @@ class Manage:
                     
         return list_save_job
 
-    def delete_job(self, name):
-        title = ""
+    def delete_job(self, name, title):
         self.__list_job.clear()
         with open (FILENAME_JOB, "r") as file:
             reader_csv = csv.reader(file)
             for row in reader_csv:
-                if row != [] and row [5] == name:
-                    title  = row[0] #get title from username who post a job
-                if row != [] and row [5] != name:
+                if row != [] and (row [5] != name or row [0] != title):
                     self.__list_job.append(j.Job(row[0],row[1],row[2],row[3],row[4],row[5]))
 
         with open (FILENAME_JOB, "w") as file:
@@ -203,10 +193,6 @@ class Manage:
             writer_csv = csv.writer(file)
             for element in self.__list_save_job:
                 writer_csv.writerow((element.get_username(),element.get_title()))
-
-
-
-    ####################### end - job - Thinh ##################################################
 
             
     # add a new object student with given first, last name and password to student_data.csv file 
@@ -312,10 +298,8 @@ class Manage:
         return None
 
 
-
-
     def add_job(self, job, n):
-        if len(self.__list_job) > 10:
+        if len(self.__list_job) > 9:
             print("You cannot post more jobs! Limit of 10!")
             return None
 
