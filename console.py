@@ -990,12 +990,12 @@ def job_Screen(name):
                     count +=1
                     print (str(count) + ": " + element)
             else:
-                print("You don't have any saved job")
+                print("You don't have any saved jobs")
             
             if len(list_save_job) != 0:
 
                 print("Do you want to unmark a job in saved jobs?")
-                print("Select one of the below option:")
+                print("Select one of the below options:")
                 print("(1) Unmark")
                 print("(2) Keep saved jobs")
                 choice = input("Your selection: ")
@@ -1006,7 +1006,7 @@ def job_Screen(name):
                     for element in list_save_job:
                         print()
                         print("Do you want to unmark the job that has the title " + "\"" + element + "\"")
-                        print("Select one of the below option:")
+                        print("Select one of the below options:")
                         print("(1) Yes")
                         print("(2) No")
                         choice = input("Your selection: ")
