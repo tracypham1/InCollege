@@ -11,13 +11,14 @@ FILENAME_PRO = "profiles.csv"
 FILENAME_FRI = "friends.csv"
 FILENAME_REQ = "requests.csv"
 FILENAME_APP = "applications.csv"
+FILENAME_MES = "pending_messages.csv"
+FILE_SAVE_MES = "messages.csv"
 STORY = "success_story.txt"
 empty_string = " "
 
 #The screen is at the begin of the program, or after its options finish (log-in, sign up)
 def welcomeScreen():
     #read the data from a text file
-    #Tracy:I commented this out bc it just doesn't run on my machine for some reason
     with open(STORY) as file:
         for line in file:
             print(line, end="")
@@ -421,6 +422,7 @@ def log_in_Screen(name):
     
     check_requests(name)
     check_application(name)
+    check_messages(name)
 
     print()
     print("Select one of the below options:")
@@ -434,11 +436,12 @@ def log_in_Screen(name):
     print("(8) New Skill")
     print("(9) Useful links")
     print("(10) Important links")
-    print("(11) Sign Out")
+    print("(11) Send Message")
+    print("(12) Sign Out")
     choice = input("Your selection: ")
 
     #check the right value of input from user
-    choice = check.check_option(choice,1,11)
+    choice = check.check_option(choice,1,12)
     
     if(choice == "1"): 
         manage = m.Manage()
@@ -502,6 +505,8 @@ def log_in_Screen(name):
     elif(choice == "10"):
         importantLinks_Screen(1, name)
     elif(choice == "11"):
+        send_message(name)
+    elif(choice == "12"):
         welcomeScreen()
 
 def sign_up_Screen():
@@ -1067,4 +1072,177 @@ def delete_application(name, title):
         for element in st:
             writer_csv.writerow(element)
 
+##########################################SENDING MESSAGE FEATURE#########################################
+#same functionalitty as display_friends but that one had a view profile feature integrated in it, soooooo
+#return a list of friends by username
+def get_friends(name):
+    friend_list = [] # keep username
+   
 
+    with open (FILENAME_FRI, "r") as file:
+        reader_csv = csv.reader(file)
+        for row in reader_csv:
+            if row != [] and row [0] == name and (row[1] not in friend_list):
+                friend_list.append(row[1])
+            elif row != [] and row [1] == name and (row [0] not in friend_list):
+                friend_list.append(row[0])
+    
+    return friend_list
+
+#returns list of all usernames in system
+def all_profiles(name):
+    names = list()
+    uname = list()
+    blank = []
+            
+    with open(FILENAME_STD, 'r') as readFile:
+        reader = csv.reader(readFile)
+        for row in reader:
+            if (row != blank) and (row[0] != name) and (row[0] != "User_Name"): #or else there will be too much empty space
+                uname.append(row[0])
+                names.append(row[2]+" "+row[3])
+
+    i = 0
+    print("Users of InCollege: ")
+    while i < len(names):
+        print(str(i+1)+". "+names[i])
+        i += 1
+    return uname
+
+def send_message(name):
+    #get the tier account of the user. name == username
+    with open(FILENAME_STD, 'r') as file:
+        reader = csv.reader(file)
+        for row in reader:
+            if row != [] and (row[0] == name):
+                tier = row[4]
+    
+    #display list of all people in system
+    all_users = all_profiles(name)
+    valid_users = get_friends(name)
+
+
+    #allow user to send a message
+    #or go back to 
+#    print("Continue to send a message")
+#    print("Go back to Log In Screen")
+
+    #prompt user to select
+    choice = input("Select a friend to send a message to by the number: ")
+    choice = check.check_option(choice,1,len(all_users))
+
+    sendTo = all_users[int(choice)-1] #username looking to sendTo
+    canSend = False
+
+    #check if user is friend before they can send message
+    if tier == "standard":
+        for x in valid_users:
+            if x == sendTo:
+                canSend = True
+    elif tier == "plus": #plus members able to send the message directly
+        canSend = True
+
+
+    #send the message or don't
+    if canSend == True:
+        manage = m.Manage()
+        message = input("Message being sent to user "+sendTo+":\n")
+        #sender = name
+        #receiver = sendTo
+        manage.add_pending_message(name, sendTo, message)
+        print("Message sent!")
+    else: 
+        print("I'm sorry, you are not friends with that person")
+    
+    #menu options
+    print("Select one of the below options:")
+    print("(1) Send another message")
+    print("(2) Return to Log In Screen")
+    choice = input("Your selection: ")
+    #check the right value of input from user
+    choice = check.check_option(choice,1,2)
+
+    if (choice == "1"):
+        send_message(name)
+    else:
+        log_in_Screen(name)
+
+
+def check_messages(name):
+    list_message = [] # keep a tupe (from, message)
+    with open (FILENAME_MES, "r") as file:
+        reader_csv = csv.reader(file)
+        for row in reader_csv:
+            if row != [] and row [1] == name:
+                list_message.append((row[0],row[1], row[2]))
+    
+    if len(list_message) > 0:
+        print ("You have some messages from some people!")
+        for element in list_message:   
+            From, To, Message = element
+            print()
+            print ("Do you want to see the message from: " + "\"" + From + "\"")
+            print("Select one of the below options:")
+            print("(1) Yes")
+            print("(2) No")
+            choice = input("Your selection: ")
+            #check the right value of input from user
+            choice = check.check_option(choice,1,2)
+
+            if choice == "1":
+                print()
+                print(Message)
+
+                print ("Do you want to save the message from: " + "\"" + From + "\"")
+                print("Select one of the below options:")
+                print("(1) Yes")
+                print("(2) No")
+                choice = input("Your selection: ")
+                #check the right value of input from user
+                choice = check.check_option(choice,1,2)
+
+                if (choice == "1"):
+                    add_message(From,To,Message)
+                    delete_pending_message(From, To, Message)
+                    print("Do you want to respond the message from " + "\"" + From + "\"")
+                    print("Select one of the below options:")
+                    print("(1) Yes")
+                    print("(2) No")
+                    choice = input("Your selection: ")
+                    #check the right value of input from user
+                    choice = check.check_option(choice,1,2)
+                    if choice == "1":
+                        mes = input ("Please type a message: ")
+                        with open(FILENAME_MES,"a") as file:
+                            writer = csv.writer(file)
+                            writer.writerow((To, From, mes))
+                        print("The message was sent to " + "\"" + From + "\"")
+                    elif choice == "2":
+                        pass
+
+                elif  choice == "2":
+                    delete_pending_message(From, To, Message)
+            elif choice == "2":
+                pass
+
+def add_message(From, To, Message):
+    with open(FILE_SAVE_MES, "a") as file:
+        writer = csv.writer(file)
+        writer.writerow((From, To, Message))
+
+def delete_pending_message (From, To, Message):
+    st = []
+    with open(FILENAME_MES,"r") as file:
+        reader_csv = csv.reader(file)
+        for row in reader_csv:
+            if row != [] and (row[0] != From or row[1] != To or row[2] != Message):
+                st.append(tuple(row))
+
+    with open(FILENAME_MES,"w") as file:
+        writer_csv = csv.writer(file)
+        for element in st:
+            writer_csv.writerow(element)
+
+
+
+    
