@@ -13,6 +13,7 @@ FILENAME_REQ = "requests.csv"
 FILENAME_APP = "applications.csv"
 FILENAME_MES = "pending_messages.csv"
 FILENAME_SAVE_MES = "messages.csv"
+FILENAME_NEW_USER = "new_user.csv"
 STORY = "success_story.txt"
 empty_string = " "
 
@@ -31,6 +32,8 @@ def welcomeScreen():
         open(FILENAME_MES, 'w').close()
     if(not os.path.exists(FILENAME_SAVE_MES)):
         open(FILENAME_SAVE_MES, 'w').close()
+    if (not os.path.exists(FILENAME_NEW_USER)):
+        open(FILENAME_NEW_USER, 'w').close()
 
     print()
     print("Select one of the below options:\n")
@@ -427,7 +430,10 @@ def log_in_Screen(name):
     
     check_requests(name)
     check_application(name)
+    check_application(name)
     check_messages(name)
+    check_profile_creation(name)
+    check_new_user(name)
 
     print()
     print("Select one of the below options:")
@@ -517,8 +523,16 @@ def log_in_Screen(name):
 def sign_up_Screen():
     manage = m.Manage()
     name = manage.new_account()
+    lines = list()
     if name != None: #sign up successfully
+       with open(FILENAME_NEW_USER, "w") as file:
+           writer_csv = csv.writer(file)
+           lines.append(name)
+           lines.append("first")
+           writer_csv.writerow(lines)
        log_in_Screen(name)
+       #add name to new_user file
+
     else: 
         print()
         print("Select one of the below options:")
@@ -1175,6 +1189,62 @@ def send_message(name):
         send_message(name)
     else:
         log_in_Screen(name)
+
+def check_profile_creation(name):
+    #Read profile name and if none match then send message
+    send_message = 1
+    with open(FILENAME_PRO, "r") as file:
+        reader_csv = csv.reader(file)
+        for row in reader_csv:
+            if row != [] and row[1] == name:
+                #if name found then don't send message.
+                send_message = 0
+
+    print_profile_notification(send_message)
+
+
+def print_profile_notification(send_message):
+    if send_message == 1:
+        print("You have not created a profile yet! Please make a profile")
+
+def check_new_user(name):
+    #look at file named new_users if name on list then send notification
+    #after send notification remove name from list
+
+    lines = list()
+    new_row = list()
+    with open(FILENAME_NEW_USER, "r") as file:
+        reader_csv = csv.reader(file)
+        for row in reader_csv:
+            lines.append(row)
+            if row != [] and row[0] == name:
+                # if name found send message and remove name from file
+
+                if row[1] == "first":
+                    lines.remove(row)
+                    new_row.append(name)
+                    new_row.append("second")
+                    lines.append(new_row)
+                elif row[1] == "second":
+                    #look in student.data and find last name and first name
+                    with open(FILENAME_STD, "r") as file1:
+                        reader_csv1 = csv.reader(file1)
+                        for row1 in reader_csv1:
+                            if row1 != [] and row1[0] == name:
+                                first_name = row1[2]
+                                last_name = row1[3]
+                                print(first_name +" " +last_name + " has joined in college")
+                        # if name found send message and remove name from file
+
+                    #print(" first name , last name has joined in college")
+
+
+                #remove name from list
+    with open(FILENAME_NEW_USER, "w") as writeFile:
+        writer = csv.writer(writeFile)
+        writer.writerows(lines)
+
+
 
 
 def check_messages(name):
