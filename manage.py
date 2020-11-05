@@ -13,6 +13,8 @@ import settings as stg
 import profiles as pro
 import save as sa
 from datetime import datetime
+from datetime import date
+from datetime import timedelta
 
 FILENAME = "student_data.csv"
 FILENAME_JOB = "job_data.csv"
@@ -24,6 +26,7 @@ FILENAME_APP = "applications.csv"
 FILENAME_SAVE_JOB ="save_job.csv"
 FILENAME_MES = "pending_messages.csv" #FromThisUsername, ToThisUsername, the Message
 FILE_SAVE_MES = "messages.csv"
+FILENAME_NEW_JOB = "new_jobs.csv"
 
 class Manage:
     def __init__(self):
@@ -57,7 +60,7 @@ class Manage:
         if not os.path.isfile(FILENAME):
             with open(FILENAME,"w") as file:
                 writer_csv = csv.writer(file)
-                writer_csv.writerow(("User_Name","Password","First_Name","Last_Name","Tier"))
+                writer_csv.writerow(("User_Name","Password","First_Name","Last_Name","Tier", "DayOfLastJobApplication"))
 
         #add data from student_data.csv to __self.__list_student
         with open(FILENAME,"r") as file:
@@ -106,7 +109,19 @@ class Manage:
                 if row != []:
                     self.__list_profiles.append(pro.Profiles(row[0], row[1], row[2], row[3], row[4], row[5], row[6]))
 
-    
+        
+        #add title for the pending_messages.csv
+        if not os.path.isfile(FILENAME_PRO):
+            with open(FILENAME_MES,"w") as file:
+                writer_csv = csv.writer(file)
+        
+        #add title for the new_jobs.csv
+        if not os.path.isfile(FILENAME_NEW_JOB):
+            with open(FILENAME_NEW_JOB,"w") as file:
+                writer_csv = csv.writer(file)
+                writer_csv.writerow(("jobTitle", "List of NOT seen"))
+
+
     def get_list(self):
         return self.__list_student
 
@@ -213,7 +228,7 @@ class Manage:
             #need to add a new student to student_data.csv
             with open(FILENAME,"a") as file:
                 writer_csv = csv.writer(file)
-                writer_csv.writerow((student.get_user_name(),student.get_password(),student.get_first(),student.get_last(),student.get_tier()))  
+                writer_csv.writerow((student.get_user_name(),student.get_password(),student.get_first(),student.get_last(),student.get_tier(), "0"))  
 
             #create settings associated with this user
             with open(FILENAME_STG, "a") as file_stg:
@@ -335,6 +350,16 @@ class Manage:
         employer = input("Enter Emplyer: ")
         location = input("Enter Location: ")
         salary = input("Salary: ")
+
+        #add this job to FILENAME_NEW_JOB to notify users
+        temp_entry = list()
+        temp_entry.append(title)
+        for user in all_users():
+            temp_entry.append(user)
+        with open(FILENAME_NEW_JOB,"a") as file:
+            writer_csv = csv.writer(file)
+            writer_csv.writerow(temp_entry) 
+
 
         p = check.Input_Value()
         #check right value of salary
@@ -587,7 +612,31 @@ class Manage:
         with open(FILENAME_MES, "a") as file:
             writer = csv.writer(file)
             writer.writerow((From, To, Message))
-        
+
+    #if they have never applied to a job row[5] shows "0"
+    def save_date_LastJobAppliedTo(self, name):
+        today_ = datetime.today()
+        today = today_.strftime('%Y-%m-%d 00:00:00')
+
+        lines = list()
+        #files have to be overwritten
+        with open(FILENAME, "r") as file:
+            reader = csv.reader(file)
+            _lines = list(reader)
+            for row in _lines:
+                if(row != []):
+                    lines.append(row)
+
+            #look for student by user 'name' and add to row[5]    
+            for row in lines:
+                if (row != []) and (row[0] == name):
+                    row[5] = today
+                    break
+                       
+        with open(FILENAME, "w") as file:
+            writer = csv.writer(file)
+            writer.writerows(lines)
+
 
 def valiDate(date_text):
     try:
@@ -600,6 +649,19 @@ def compareDates(date1, date2):
     d1 = datetime.strptime(date1, '%m/%d/%Y')
     d2 = datetime.strptime(date2, '%m/%d/%Y')
     return d1<d2
+
+#returns a list of all usernames
+def all_users():
+    unames = list()
+
+    with open(FILENAME, "r") as file:
+        reader = csv.reader(file)
+        lines = list(reader)
+        for row in lines:
+            if(row != []) and (row[0] != "User_Name"):
+                unames.append(row[0])
+
+    return unames
 
 
 

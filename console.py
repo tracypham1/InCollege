@@ -2,6 +2,8 @@ import manage as m
 import check 
 import csv
 import os.path
+from datetime import datetime
+from datetime import timedelta
 
 FILENAME_STD = "student_data.csv"
 FILENAME_JOB = "job_data.csv"
@@ -14,11 +16,12 @@ FILENAME_APP = "applications.csv"
 FILENAME_MES = "pending_messages.csv"
 FILENAME_SAVE_MES = "messages.csv"
 FILENAME_NEW_USER = "new_user.csv"
+FILENAME_NEW_JOB = "new_jobs.csv"
 STORY = "success_story.txt"
 empty_string = " "
 
 #The screen is at the begin of the program, or after its options finish (log-in, sign up)
-def welcomeScreen():
+def welcomeScreen():    
     #read the data from a text file
     with open(STORY) as file:
         for line in file:
@@ -434,6 +437,8 @@ def log_in_Screen(name):
     check_messages(name)
     check_profile_creation(name)
     check_new_user(name)
+    check_applied_in_seven_days(name)
+    check_new_job(name)
 
     print()
     print("Select one of the below options:")
@@ -908,6 +913,7 @@ def display_Friend(name):
 def job_Screen(name):
     selection = 0
     while(selection != "5"):
+        check_num_jobs_appliedto(name)
         print("Enter '1' to search all jobs in the system")
         print("Enter '2' to view jobs that you have applied for")
         print("Enter '3' to view jobs that you have not applied for")
@@ -967,8 +973,11 @@ def job_Screen(name):
                                         applied = applied + 1
                         if applied > 0:
                             print("You have already applied to that job")
-                        else:
+                        else: 
                             manage.add_application(name, jobs[int(choice)-1][0], jobs[int(choice)-1][2])
+
+                            #goes here if applied was successfull, so we record this date for the notification
+                            manage.save_date_LastJobAppliedTo(name)
                     elif (choice_B == "2"): #Save
                         manage.add_save_job(name,jobs[int(choice)-1][0])
                         
@@ -1144,12 +1153,6 @@ def send_message(name):
     all_users = all_profiles(name)
     valid_users = get_friends(name)
 
-
-    #allow user to send a message
-    #or go back to 
-#    print("Continue to send a message")
-#    print("Go back to Log In Screen")
-
     #prompt user to select
     choice = input("Select a friend to send a message to by the number: ")
     choice = check.check_option(choice,1,len(all_users))
@@ -1314,6 +1317,52 @@ def delete_pending_message (From, To, Message):
         for element in st:
             writer_csv.writerow(element)
 
+###############################JOB RELATED NOTIFICATIONS########################
+def check_applied_in_seven_days(name):
+    #checks if its been seven days since applying to a job
+    with open(FILENAME_STD, "r") as file:
+        reader = csv.reader(file)
+        lines = list(reader)
+        for row in lines:
+            if (row != []) and (row[0] == name):
+                lastApplied = row[5]
+                _today =  datetime.today().strftime('%Y %m %d')
+                today = datetime.strptime(_today, '%Y %m %d')
+                sevenMinusToday = today+timedelta(days=-7)
 
+                if(lastApplied == str(sevenMinusToday)):
+                    #send job notification
+                    print("Remember – you're going to want to have a job when you graduate. Make sure that you start to apply for jobs today!")
+                #uhh = datetime_object+timedelta(days = 8)
 
+def check_num_jobs_appliedto(name):
+    with open(FILENAME_APP,"r") as file:
+                reader_csv = csv.reader(file)
+                i = 0
+                for row in reader_csv:
+                    if row != [] and row[0] == name:
+                        i += 1
+    print("\nYou have currently applied for "+str(i)+" job(s).")
+
+def check_new_job(name):
+    overwrite = list()
     
+    with open(FILENAME_NEW_JOB, "r") as file:
+        reader = csv.reader(file)
+        job = list(reader) 
+        for row in job: #each row is a 'job title', 'list of users who have not seen'
+            if(row == []):
+                continue
+            new_row = list()
+            if(row != []) and (row[0] != "jobTitle"):
+                for entry in row:
+                    if entry == name:
+                        print("A new job "+row[0]+" has been posted")
+                    else:
+                        new_row.append(entry)
+            overwrite.append(new_row)
+          
+    with open(FILENAME_NEW_JOB, "w") as file:
+        writer = csv.writer(file)
+        writer.writerows(overwrite) 
+
