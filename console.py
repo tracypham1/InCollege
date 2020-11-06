@@ -17,6 +17,7 @@ FILENAME_MES = "pending_messages.csv"
 FILENAME_SAVE_MES = "messages.csv"
 FILENAME_NEW_USER = "new_user.csv"
 FILENAME_NEW_JOB = "new_jobs.csv"
+FILENAME_DEL_JOB = "del_jobs_notif.csv"
 STORY = "success_story.txt"
 empty_string = " "
 
@@ -430,16 +431,22 @@ def learnSkill_Screen(name):
 
 #The screen after the user log in successfully
 def log_in_Screen(name):
-    
-    check_requests(name)
-    check_application(name)
-    check_application(name)
-    check_messages(name)
-    check_profile_creation(name)
-    check_new_user(name)
-    check_applied_in_seven_days(name)
-    check_new_job(name)
 
+    print("Enter 1 to see all notifications. Enter 0 to continue")
+    pick = input("Your selection: ")
+    pick = check.check_option(pick, 0, 1)
+    if pick == 1:
+        check_requests(name)
+        check_application(name)
+        check_application(name)
+        check_messages(name)
+        check_profile_creation(name)
+        #check_new_user(name)
+        check_applied_in_seven_days(name)
+        check_new_job(name)
+        check_del_job(name)
+
+    check_new_user(name)
     print()
     print("Select one of the below options:")
     print("(1) Post Job")
@@ -1366,3 +1373,18 @@ def check_new_job(name):
         writer = csv.writer(file)
         writer.writerows(overwrite) 
 
+def check_del_job(name):
+    new_notif = list()
+
+    with open(FILENAME_DEL_JOB, "r") as file:
+        reader = csv.reader(file)
+        notif = list(reader) 
+        for row in notif:
+            if (row != []) and (row[0] == name):
+                print("The job \'"+row[1]+"\' you applied for has been deleted.")
+            elif (row != []):
+                new_notif.append(row)
+            
+    with open(FILENAME_DEL_JOB, "w") as file:
+        writer = csv.writer(file)
+        writer.writerows(new_notif) 

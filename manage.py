@@ -26,7 +26,8 @@ FILENAME_APP = "applications.csv"
 FILENAME_SAVE_JOB ="save_job.csv"
 FILENAME_MES = "pending_messages.csv" #FromThisUsername, ToThisUsername, the Message
 FILE_SAVE_MES = "messages.csv"
-FILENAME_NEW_JOB = "new_jobs.csv"
+FILENAME_NEW_JOB = "new_jobs_notif.csv"
+FILENAME_DEL_JOB = "del_jobs_notif.csv"
 
 class Manage:
     def __init__(self):
@@ -121,6 +122,12 @@ class Manage:
                 writer_csv = csv.writer(file)
                 writer_csv.writerow(("jobTitle", "List of NOT seen"))
 
+        #create del_job_app file
+        if not os.path.isfile(FILENAME_DEL_JOB):
+            with open(FILENAME_DEL_JOB,"w") as file:
+                writer_csv = csv.writer(file)
+                writer_csv.writerow(("user", "appliedTo", "and some"))
+
 
     def get_list(self):
         return self.__list_student
@@ -184,6 +191,7 @@ class Manage:
             for element in self.__list_job:
                 writer_csv.writerow((element.get_title(),element.get_description(),element.get_employer(),element.get_location(),element.get_salary(), element.get_post_name()))
 
+        
         #should delete the rows in save_job.csv that relative to the job deleted
         print(title)
         self.__list_save_job.clear()
@@ -197,6 +205,32 @@ class Manage:
             writer_csv = csv.writer(file)
             for element in self.__list_save_job:
                 writer_csv.writerow((element.get_username(), element.get_title()))
+
+        #for deleting the applications related to the job and notifying them about it
+        self.__list_job.clear()
+        
+        #name of those who need to be notified of deleted job
+        notify_applicants = list()
+
+        with open (FILENAME_APP, "r") as file:
+            reader_csv = csv.reader(file)
+            for row in reader_csv:
+                if (row != []) and (row [1] == title):
+                    notify_applicants.append(row)
+                elif (row != []):
+                    self.__list_job.append(row)
+
+        with open (FILENAME_APP, "w") as file:
+            writer_csv = csv.writer(file)
+            for element in self.__list_job:
+                writer_csv.writerow(element)
+
+        with open (FILENAME_DEL_JOB, "a") as file:
+            writer_csv = csv.writer(file)
+            for element in notify_applicants:
+                writer_csv.writerow(element)
+
+
 
     def delete_save_job(self, name, title):
         self.__list_save_job.clear()
