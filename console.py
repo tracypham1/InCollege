@@ -435,7 +435,7 @@ def log_in_Screen(name):
     print("Enter 1 to see all notifications. Enter 0 to continue")
     pick = input("Your selection: ")
     pick = check.check_option(pick, 0, 1)
-    if pick == 1:
+    if pick == "1":
         check_requests(name)
         check_application(name)
         check_application(name)
@@ -447,6 +447,7 @@ def log_in_Screen(name):
         check_del_job(name)
 
     check_new_user(name)
+
     print()
     print("Select one of the below options:")
     print("(1) Post Job")
@@ -1245,8 +1246,13 @@ def check_new_user(name):
                                 last_name = row1[3]
                                 print(first_name +" " +last_name + " has joined in college")
                         # if name found send message and remove name from file
-
+                    lines.remove(row)
+                    new_row.append(name)
+                    new_row.append("third")
+                    lines.append(new_row)
+                elif row[1] == "third":
                     #print(" first name , last name has joined in college")
+                    var = 1
 
 
                 #remove name from list
