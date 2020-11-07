@@ -381,7 +381,7 @@ class Manage:
         
         title = input("Enter Title: ")
         description = input("Enter Description: ")
-        employer = input("Enter Emplyer: ")
+        employer = input("Enter Employer: ")
         location = input("Enter Location: ")
         salary = input("Salary: ")
 

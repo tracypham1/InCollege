@@ -16,6 +16,7 @@ FILENAME_APP = "applications.csv"
 FILENAME_MES = "pending_messages.csv"
 FILENAME_SAVE_MES = "messages.csv"
 FILENAME_NEW_USER = "new_user.csv"
+FILENAME_NEW_JOB = "new_jobs_notif.csv"
 FILENAME_NEW_JOB = "new_jobs.csv"
 FILENAME_DEL_JOB = "del_jobs_notif.csv"
 STORY = "success_story.txt"
@@ -1209,7 +1210,7 @@ def check_profile_creation(name):
     with open(FILENAME_PRO, "r") as file:
         reader_csv = csv.reader(file)
         for row in reader_csv:
-            if row != [] and row[1] == name:
+            if row != [] and row[0] == name:
                 #if name found then don't send message.
                 send_message = 0
 
@@ -1344,11 +1345,11 @@ def check_applied_in_seven_days(name):
                 _today =  datetime.today().strftime('%Y %m %d')
                 today = datetime.strptime(_today, '%Y %m %d')
                 sevenMinusToday = today+timedelta(days=-7)
-
-                if(lastApplied == str(sevenMinusToday)):
-                    #send job notification
-                    print("Remember – you're going to want to have a job when you graduate. Make sure that you start to apply for jobs today!")
-                #uhh = datetime_object+timedelta(days = 8)
+                if(row[5] != "0"):
+                    lastTime = datetime.strptime(lastApplied, '%Y-%m-%d %H:%M:%S')
+                    if(lastTime <= sevenMinusToday):
+                        #send job notification
+                        print("Remember – you're going to want to have a job when you graduate. Make sure that you start to apply for jobs today!")
 
 def check_num_jobs_appliedto(name):
     with open(FILENAME_APP,"r") as file:
