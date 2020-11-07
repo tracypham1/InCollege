@@ -38,6 +38,8 @@ def welcomeScreen():
         open(FILENAME_SAVE_MES, 'w').close()
     if (not os.path.exists(FILENAME_NEW_USER)):
         open(FILENAME_NEW_USER, 'w').close()
+    if(not os.path.exists(FILENAME_NEW_JOB)): 
+        open(FILENAME_NEW_JOB, 'w').close()
 
     print()
     print("Select one of the below options:\n")
