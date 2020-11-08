@@ -73,53 +73,6 @@ def test_profile_notification():
             writer_csv.writerow(element)
 
 
-def test_new_user():
-    username = "test_new_user"
-    #sign up in the system
-    check  = 0
-    with open (FILENAME_NEW_USER, "a") as file:
-        writer_csv = csv.writer(file)
-        writer_csv.writerow((username,"second"))
-
-    #for first log in after sign up, "check" variable should be 1 because this is the first time the user logs in again
-    check = cs.check_new_user(username)
-    assert check == 1
-
-    #after the first log in, "check" variable should be 0 because this is not the first time the user logs in the system
-    check = cs.check_new_user(username)
-    assert check == 0  
-
-    #test again after the second log in, "check" variable should be 0 because this is not the first time the user logs in the system
-    check = cs.check_new_user(username)
-    assert check == 0  
-
-
-    #delete username for the next test in new_user.csv
-    st = []
-    with open(FILENAME_NEW_USER,"r") as file:
-        reader_csv = csv.reader(file)
-        for row in reader_csv:
-            if row != [] and row[0] != username:
-                st.append(tuple(row))
-
-    with open(FILENAME_NEW_USER,"w") as file:
-        writer_csv = csv.writer(file)
-        for element in st:
-            writer_csv.writerow(element)
-
-    #delete username for the next test in student_data.csv
-    st = []
-    with open(FILENAME_STD,"r") as file:
-        reader_csv = csv.reader(file)
-        for row in reader_csv:
-            if row != [] and row[0] != username:
-                st.append(tuple(row))
-
-    with open(FILENAME_STD,"w") as file:
-        writer_csv = csv.writer(file)
-        for element in st:
-            writer_csv.writerow(element)
-
 
 
 ###################### The ending for testing the epic 8 ##############

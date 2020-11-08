@@ -443,12 +443,11 @@ def log_in_Screen(name):
         check_application(name)
         check_messages(name)
         check_profile_creation(name)
-        #check_new_user(name)
+        check_new_user(name)
         check_applied_in_seven_days(name)
         check_new_job(name)
         check_del_job(name)
 
-    check_new_user(name)
 
     print()
     print("Select one of the below options:")
@@ -541,15 +540,20 @@ def sign_up_Screen():
     name = manage.new_account()
     lines = list()
     if name != None: #sign up successfully
-       with open(FILENAME_NEW_USER, "a") as file:
-           writer_csv = csv.writer(file)
-           lines.append(name)
-           lines.append("first")
-           writer_csv.writerow(lines)
-       log_in_Screen(name)
-       #add name to new_user file
+        lines.append(name)
+        with open(FILENAME_STD, "r") as file1:
+            reader_csv1 = csv.reader(file1)
+            for row1 in reader_csv1:
+                if row1 != []:
+                    lines.append(row1[0])
 
-    else: 
+        with open(FILENAME_NEW_USER, "a") as file:
+            writer_csv = csv.writer(file)
+            writer_csv.writerow(lines)
+        log_in_Screen(name)
+    #add name to new_user file
+
+    else:
         print()
         print("Select one of the below options:")
         print("(1) Sign Up Again! ")
@@ -1223,49 +1227,37 @@ def print_profile_notification(send_message):
         print("You have not created a profile yet! Please make a profile")
 
 def check_new_user(name):
-    #look at file named new_users if name on list then send notification
-    #after send notification remove name from list
-
-    lines = list()
-    new_row = list()
+    overwrite = list()
     check = 0
     with open(FILENAME_NEW_USER, "r") as file:
-        reader_csv = csv.reader(file)
-        for row in reader_csv:
-            if row != []:
-                lines.append(row)
-            if row != [] and row[0] == name:
-                # if name found send message and remove name from file
-
-                if row[1] == "first":
-                    lines.remove(row)
-                    new_row.append(name)
-                    new_row.append("second")
-                    lines.append(new_row)
-                elif row[1] == "second":
-                    #look in student.data and find last name and first name
-                    with open(FILENAME_STD, "r") as file1:
-                        reader_csv1 = csv.reader(file1)
-                        for row1 in reader_csv1:
-                            if row1 != [] and row1[0] == name:
-                                first_name = row1[2]
-                                last_name = row1[3]
-                                print(first_name +" " +last_name + " has joined in college")
-                        # if name found send message and remove name from file
-                    lines.remove(row)
-                    new_row.append(name)
-                    new_row.append("third")
-                    lines.append(new_row)
-                    check = 1
-                elif row[1] == "third":
-                    #print(" first name , last name has joined in college")
-                    var = 1
-
-
-                #remove name from list
-    with open(FILENAME_NEW_USER, "w") as writeFile:
-        writer = csv.writer(writeFile)
-        writer.writerows(lines)
+        reader = csv.reader(file)
+        user = list(reader) 
+        for row in user:
+            if(row == []):
+                continue
+            new_row = list()
+            if(row[0] == name):
+                for entry in row:
+                    new_row.append(entry)
+            else:
+                for entry in row:
+                    if entry == name:
+                        check = 1
+                        newName = row[0]
+                        with open(FILENAME_STD, "r") as file1:
+                             reader_csv1 = csv.reader(file1)
+                             for row1 in reader_csv1:
+                                if row1 != [] and row1[0] == newName:
+                                    first_name = row1[2]
+                                    last_name = row1[3]
+                                    print(first_name +" " +last_name + " has joined in college")
+                    else:
+                        new_row.append(entry)
+            overwrite.append(new_row)
+          
+    with open(FILENAME_NEW_USER, "w") as file:
+        writer = csv.writer(file)
+        writer.writerows(overwrite) 
     
     return check
 
