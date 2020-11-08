@@ -1216,6 +1216,7 @@ def check_profile_creation(name):
                 send_message = 0
 
     print_profile_notification(send_message)
+    return send_message
 
 
 def print_profile_notification(send_message):
@@ -1228,6 +1229,7 @@ def check_new_user(name):
 
     lines = list()
     new_row = list()
+    check = 0
     with open(FILENAME_NEW_USER, "r") as file:
         reader_csv = csv.reader(file)
         for row in reader_csv:
@@ -1255,6 +1257,7 @@ def check_new_user(name):
                     new_row.append(name)
                     new_row.append("third")
                     lines.append(new_row)
+                    check = 1
                 elif row[1] == "third":
                     #print(" first name , last name has joined in college")
                     var = 1
@@ -1264,6 +1267,8 @@ def check_new_user(name):
     with open(FILENAME_NEW_USER, "w") as writeFile:
         writer = csv.writer(writeFile)
         writer.writerows(lines)
+    
+    return check
 
 
 

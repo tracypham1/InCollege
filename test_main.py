@@ -9,11 +9,120 @@ import random
 from random import choice
 import string
 import csv
+import os.path
+import console as cs
+
+################# the beginning for testing the epic 8 ##########
+
+#search functionality
+FILENAME_STD = "student_data.csv"
+FILENAME_JOB = "job_data.csv"
+FILENAME_STG = "settings.csv"
+FILENAME_POL = "policy.csv"
+FILENAME_PRO = "profiles.csv"
+FILENAME_FRI = "friends.csv"
+FILENAME_REQ = "requests.csv"
+FILENAME_APP = "applications.csv"
+FILENAME_MES = "pending_messages.csv"
+FILENAME_SAVE_MES = "messages.csv"
+FILENAME_NEW_USER = "new_user.csv"
+FILENAME_NEW_JOB = "new_jobs_notif.csv"
+FILENAME_NEW_JOB = "new_jobs.csv"
+FILENAME_DEL_JOB = "del_jobs_notif.csv"
+STORY = "success_story.txt"
+empty_string = " "
+
+
+if (not os.path.exists(FILENAME_NEW_USER)):
+    open(FILENAME_NEW_USER, 'w').close()
+
+if (not os.path.exists(FILENAME_PRO)):
+    open(FILENAME_PRO, 'w').close()
+
+def test_profile_notification():
+    username1 = "hasProfile"
+    username2 = "noProfile"
+
+    check = 1
+
+    #add profile for username1
+    with open(FILENAME_PRO,"a") as file:
+        writer = csv.writer(file)
+        writer.writerow((username1,"Title","Major","University","Bio","Experience","Education"))
+    
+    #check if username1 has profile --> should return 0 because username1 created a profile
+    check = cs.check_profile_creation(username1)
+    assert check == 0
+
+    #check if username2 has profile --> should return 1 because username2 did not create a profile
+    check = cs.check_profile_creation(username2)
+    assert check == 1
+
+    
+    #delete profile for username1 for the next test
+    st = []
+    with open(FILENAME_PRO,"r") as file:
+        reader_csv = csv.reader(file)
+        for row in reader_csv:
+            if row != [] and row[0] != username1:
+                st.append(tuple(row))
+
+    with open(FILENAME_PRO,"w") as file:
+        writer_csv = csv.writer(file)
+        for element in st:
+            writer_csv.writerow(element)
+
+
+def test_new_user():
+    username = "test_new_user"
+    #sign up in the system
+    check  = 0
+    with open (FILENAME_NEW_USER, "a") as file:
+        writer_csv = csv.writer(file)
+        writer_csv.writerow((username,"second"))
+
+    #for first log in after sign up, "check" variable should be 1 because this is the first time the user logs in again
+    check = cs.check_new_user(username)
+    assert check == 1
+
+    #after the first log in, "check" variable should be 0 because this is not the first time the user logs in the system
+    check = cs.check_new_user(username)
+    assert check == 0  
+
+    #test again after the second log in, "check" variable should be 0 because this is not the first time the user logs in the system
+    check = cs.check_new_user(username)
+    assert check == 0  
+
+
+    #delete username for the next test in new_user.csv
+    st = []
+    with open(FILENAME_NEW_USER,"r") as file:
+        reader_csv = csv.reader(file)
+        for row in reader_csv:
+            if row != [] and row[0] != username:
+                st.append(tuple(row))
+
+    with open(FILENAME_NEW_USER,"w") as file:
+        writer_csv = csv.writer(file)
+        for element in st:
+            writer_csv.writerow(element)
+
+    #delete username for the next test in student_data.csv
+    st = []
+    with open(FILENAME_STD,"r") as file:
+        reader_csv = csv.reader(file)
+        for row in reader_csv:
+            if row != [] and row[0] != username:
+                st.append(tuple(row))
+
+    with open(FILENAME_STD,"w") as file:
+        writer_csv = csv.writer(file)
+        for element in st:
+            writer_csv.writerow(element)
 
 
 
-
-
+###################### The ending for testing the epic 8 ##############
 
 class TestClass:
 
