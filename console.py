@@ -435,7 +435,7 @@ def learnSkill_Screen(name):
 #The screen after the user log in successfully
 def log_in_Screen(name):
 
-    print("Enter 1 to see all notifications. Enter 0 to continue")
+    print("Enter 1 to check any notifications. Enter 0 to continue")
     pick = input("Your selection: ")
     pick = check.check_option(pick, 0, 1)
     if pick == "1":
@@ -460,6 +460,7 @@ def log_in_Screen(name):
     print("(5) View Profile")
     print("(6) Search for friends to connect with")
     print("(7) Show my network")
+    print("(8) New Skill")
     print("(8) New Skill")
     print("(9) Useful links")
     print("(10) Important links")
@@ -541,7 +542,7 @@ def sign_up_Screen():
     name = manage.new_account()
     lines = list()
     if name != None: #sign up successfully
-       with open(FILENAME_NEW_USER, "w") as file:
+       with open(FILENAME_NEW_USER, "a") as file:
            writer_csv = csv.writer(file)
            lines.append(name)
            lines.append("first")
@@ -1230,7 +1231,8 @@ def check_new_user(name):
     with open(FILENAME_NEW_USER, "r") as file:
         reader_csv = csv.reader(file)
         for row in reader_csv:
-            lines.append(row)
+            if row != []:
+                lines.append(row)
             if row != [] and row[0] == name:
                 # if name found send message and remove name from file
 

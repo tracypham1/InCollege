@@ -44,7 +44,7 @@ class Manage:
         if not os.path.isfile(FILENAME_SAVE_JOB):
             with open(FILENAME_SAVE_JOB,"w") as file:
                 writer_csv = csv.writer(file)
-                writer_csv.writerow(("User_Name","Title"))
+                #writer_csv.writerow(("User_Name","Title"))
 
        
         with open(FILENAME_SAVE_JOB,"r") as file:
@@ -61,7 +61,7 @@ class Manage:
         if not os.path.isfile(FILENAME):
             with open(FILENAME,"w") as file:
                 writer_csv = csv.writer(file)
-                writer_csv.writerow(("User_Name","Password","First_Name","Last_Name","Tier", "DayOfLastJobApplication"))
+                #writer_csv.writerow(("User_Name","Password","First_Name","Last_Name","Tier", "DayOfLastJobApplication"))
 
         #add data from student_data.csv to __self.__list_student
         with open(FILENAME,"r") as file:
@@ -75,7 +75,7 @@ class Manage:
         if not os.path.isfile(FILENAME_JOB):
             with open(FILENAME_JOB,"w") as file:
                 writer_csv = csv.writer(file)
-                writer_csv.writerow(("Title","Description","Employer","Location","Salary","Post_Name"))
+                #writer_csv.writerow(("Title","Description","Employer","Location","Salary","Post_Name"))
 
         #add data from job_data to __self.__list_job
         with open(FILENAME_JOB,"r") as file:
@@ -88,7 +88,7 @@ class Manage:
         if not os.path.isfile(FILENAME_STG):
             with open(FILENAME_STG,"w") as file:
                 writer_csv = csv.writer(file)
-                writer_csv.writerow(("user", "email_notif","sms_notif","targeted_ads","language"))
+                #writer_csv.writerow(("user", "email_notif","sms_notif","targeted_ads","language"))
 
         #add data from settings.csv to __self.__list_settings
         with open(FILENAME_STG,"r") as file:
@@ -101,7 +101,7 @@ class Manage:
         if not os.path.isfile(FILENAME_PRO):
             with open(FILENAME_PRO,"w") as file:
                 writer_csv = csv.writer(file)
-                writer_csv.writerow(("user", "title","major","university","bio", "experience", "education"))
+               #writer_csv.writerow(("user", "title","major","university","bio", "experience", "education"))
 
         #add data from profiles.csv
         with open(FILENAME_PRO,"r") as file:
@@ -120,13 +120,13 @@ class Manage:
         if not os.path.isfile(FILENAME_NEW_JOB):
             with open(FILENAME_NEW_JOB,"w") as file:
                 writer_csv = csv.writer(file)
-                writer_csv.writerow(("jobTitle", "List of NOT seen"))
+                #writer_csv.writerow(("jobTitle", "List of NOT seen"))
 
         #create del_job_app file
         if not os.path.isfile(FILENAME_DEL_JOB):
             with open(FILENAME_DEL_JOB,"w") as file:
                 writer_csv = csv.writer(file)
-                writer_csv.writerow(("user", "appliedTo", "and some"))
+                #writer_csv.writerow(("user", "appliedTo", "and some"))
 
 
     def get_list(self):
