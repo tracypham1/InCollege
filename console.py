@@ -2,6 +2,8 @@ import manage as m
 import check 
 import csv
 import os.path
+from datetime import datetime
+from datetime import timedelta
 
 FILENAME_STD = "student_data.csv"
 FILENAME_JOB = "job_data.csv"
@@ -13,11 +15,14 @@ FILENAME_REQ = "requests.csv"
 FILENAME_APP = "applications.csv"
 FILENAME_MES = "pending_messages.csv"
 FILENAME_SAVE_MES = "messages.csv"
+FILENAME_NEW_USER = "new_user.csv"
+FILENAME_NEW_JOB = "new_jobs_notif.csv"
+FILENAME_DEL_JOB = "del_jobs_notif.csv"
 STORY = "success_story.txt"
 empty_string = " "
 
 #The screen is at the begin of the program, or after its options finish (log-in, sign up)
-def welcomeScreen():
+def welcomeScreen():    
     #read the data from a text file
     with open(STORY) as file:
         for line in file:
@@ -31,6 +36,10 @@ def welcomeScreen():
         open(FILENAME_MES, 'w').close()
     if(not os.path.exists(FILENAME_SAVE_MES)):
         open(FILENAME_SAVE_MES, 'w').close()
+    if (not os.path.exists(FILENAME_NEW_USER)):
+        open(FILENAME_NEW_USER, 'w').close()
+    if(not os.path.exists(FILENAME_NEW_JOB)): 
+        open(FILENAME_NEW_JOB, 'w').close()
 
     print()
     print("Select one of the below options:\n")
@@ -424,10 +433,22 @@ def learnSkill_Screen(name):
 
 #The screen after the user log in successfully
 def log_in_Screen(name):
-    
-    check_requests(name)
-    check_application(name)
-    check_messages(name)
+
+    print("Enter 1 to check any notifications. Enter 0 to continue")
+    pick = input("Your selection: ")
+    pick = check.check_option(pick, 0, 1)
+    if pick == "1":
+        check_requests(name)
+        check_application(name)
+        check_application(name)
+        check_messages(name)
+        check_profile_creation(name)
+        #check_new_user(name)
+        check_applied_in_seven_days(name)
+        check_new_job(name)
+        check_del_job(name)
+
+    check_new_user(name)
 
     print()
     print("Select one of the below options:")
@@ -438,6 +459,7 @@ def log_in_Screen(name):
     print("(5) View Profile")
     print("(6) Search for friends to connect with")
     print("(7) Show my network")
+    print("(8) New Skill")
     print("(8) New Skill")
     print("(9) Useful links")
     print("(10) Important links")
@@ -517,8 +539,16 @@ def log_in_Screen(name):
 def sign_up_Screen():
     manage = m.Manage()
     name = manage.new_account()
+    lines = list()
     if name != None: #sign up successfully
+       with open(FILENAME_NEW_USER, "a") as file:
+           writer_csv = csv.writer(file)
+           lines.append(name)
+           lines.append("first")
+           writer_csv.writerow(lines)
        log_in_Screen(name)
+       #add name to new_user file
+
     else: 
         print()
         print("Select one of the below options:")
@@ -894,6 +924,7 @@ def display_Friend(name):
 def job_Screen(name):
     selection = 0
     while(selection != "5"):
+        check_num_jobs_appliedto(name)
         print("Enter '1' to search all jobs in the system")
         print("Enter '2' to view jobs that you have applied for")
         print("Enter '3' to view jobs that you have not applied for")
@@ -953,8 +984,11 @@ def job_Screen(name):
                                         applied = applied + 1
                         if applied > 0:
                             print("You have already applied to that job")
-                        else:
+                        else: 
                             manage.add_application(name, jobs[int(choice)-1][0], jobs[int(choice)-1][2])
+
+                            #goes here if applied was successfull, so we record this date for the notification
+                            manage.save_date_LastJobAppliedTo(name)
                     elif (choice_B == "2"): #Save
                         manage.add_save_job(name,jobs[int(choice)-1][0])
                         
@@ -1130,12 +1164,6 @@ def send_message(name):
     all_users = all_profiles(name)
     valid_users = get_friends(name)
 
-
-    #allow user to send a message
-    #or go back to 
-#    print("Continue to send a message")
-#    print("Go back to Log In Screen")
-
     #prompt user to select
     choice = input("Select a friend to send a message to by the number: ")
     choice = check.check_option(choice,1,len(all_users))
@@ -1175,6 +1203,73 @@ def send_message(name):
         send_message(name)
     else:
         log_in_Screen(name)
+
+def check_profile_creation(name):
+    #Read profile name and if none match then send message
+    send_message = 1
+    with open(FILENAME_PRO, "r") as file:
+        reader_csv = csv.reader(file)
+        for row in reader_csv:
+            if row != [] and row[0] == name:
+                #if name found then don't send message.
+                send_message = 0
+
+    print_profile_notification(send_message)
+    return send_message
+
+
+def print_profile_notification(send_message):
+    if send_message == 1:
+        print("You have not created a profile yet! Please make a profile")
+
+def check_new_user(name):
+    #look at file named new_users if name on list then send notification
+    #after send notification remove name from list
+
+    lines = list()
+    new_row = list()
+    check = 0
+    with open(FILENAME_NEW_USER, "r") as file:
+        reader_csv = csv.reader(file)
+        for row in reader_csv:
+            if row != []:
+                lines.append(row)
+            if row != [] and row[0] == name:
+                # if name found send message and remove name from file
+
+                if row[1] == "first":
+                    lines.remove(row)
+                    new_row.append(name)
+                    new_row.append("second")
+                    lines.append(new_row)
+                elif row[1] == "second":
+                    #look in student.data and find last name and first name
+                    with open(FILENAME_STD, "r") as file1:
+                        reader_csv1 = csv.reader(file1)
+                        for row1 in reader_csv1:
+                            if row1 != [] and row1[0] == name:
+                                first_name = row1[2]
+                                last_name = row1[3]
+                                print(first_name +" " +last_name + " has joined in college")
+                        # if name found send message and remove name from file
+                    lines.remove(row)
+                    new_row.append(name)
+                    new_row.append("third")
+                    lines.append(new_row)
+                    check = 1
+                elif row[1] == "third":
+                    #print(" first name , last name has joined in college")
+                    var = 1
+
+
+                #remove name from list
+    with open(FILENAME_NEW_USER, "w") as writeFile:
+        writer = csv.writer(writeFile)
+        writer.writerows(lines)
+    
+    return check
+
+
 
 
 def check_messages(name):
@@ -1244,6 +1339,67 @@ def delete_pending_message (From, To, Message):
         for element in st:
             writer_csv.writerow(element)
 
+###############################JOB RELATED NOTIFICATIONS########################
+def check_applied_in_seven_days(name):
+    #checks if its been seven days since applying to a job
+    with open(FILENAME_STD, "r") as file:
+        reader = csv.reader(file)
+        lines = list(reader)
+        for row in lines:
+            if (row != []) and (row[0] == name):
+                lastApplied = row[5]
+                _today =  datetime.today().strftime('%Y %m %d')
+                today = datetime.strptime(_today, '%Y %m %d')
+                sevenMinusToday = today+timedelta(days=-7)
+                if(row[5] != "0"):
+                    lastTime = datetime.strptime(lastApplied, '%Y-%m-%d %H:%M:%S')
+                    if(lastTime <= sevenMinusToday):
+                        #send job notification
+                        print("Remember – you're going to want to have a job when you graduate. Make sure that you start to apply for jobs today!")
 
+def check_num_jobs_appliedto(name):
+    with open(FILENAME_APP,"r") as file:
+                reader_csv = csv.reader(file)
+                i = 0
+                for row in reader_csv:
+                    if row != [] and row[0] == name:
+                        i += 1
+    print("\nYou have currently applied for "+str(i)+" job(s).")
 
+def check_new_job(name):
+    overwrite = list()
     
+    with open(FILENAME_NEW_JOB, "r") as file:
+        reader = csv.reader(file)
+        job = list(reader) 
+        for row in job: #each row is a 'job title', 'list of users who have not seen'
+            if(row == []):
+                continue
+            new_row = list()
+            if(row != []) and (row[0] != "jobTitle"):
+                for entry in row:
+                    if entry == name:
+                        print("A new job "+row[0]+" has been posted")
+                    else:
+                        new_row.append(entry)
+            overwrite.append(new_row)
+          
+    with open(FILENAME_NEW_JOB, "w") as file:
+        writer = csv.writer(file)
+        writer.writerows(overwrite) 
+
+def check_del_job(name):
+    new_notif = list()
+
+    with open(FILENAME_DEL_JOB, "r") as file:
+        reader = csv.reader(file)
+        notif = list(reader) 
+        for row in notif:
+            if (row != []) and (row[0] == name):
+                print("The job \'"+row[1]+"\' you applied for has been deleted.")
+            elif (row != []):
+                new_notif.append(row)
+            
+    with open(FILENAME_DEL_JOB, "w") as file:
+        writer = csv.writer(file)
+        writer.writerows(new_notif) 
