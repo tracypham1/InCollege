@@ -1421,15 +1421,42 @@ def training_Screen():
     print()
 
     if(choice == "1"):
-        welcomeScreen()     #placeholder
+        training_edu_screen()
     elif (choice == "2"):
-        welcomeScreen()     #placeholder
+        print("coming soon!")
+        welcomeScreen()
     elif (choice == "3"):   
         businessAnalysis_Screen()
     elif (choice == "4"):
-        welcomeScreen()     #placeholder
+        print("coming soon!")
+        welcomeScreen()
     elif (choice == "5"):
         welcomeScreen()
+
+
+def training_edu_screen():
+    print()
+    print("Select one of the below options:")
+    print("(1) Inverview training")
+    print("(2) programming training ")
+    print("(3) Buisness training")
+    print("(4) Medical training")
+    choice = input("Your selection: ")
+    print()
+
+    if (choice == "1"):
+        print("Under Construction")
+        welcomeScreen()
+    elif (choice == "2"):
+        print("Under Construction")
+        welcomeScreen()
+    elif (choice == "3"):
+        print("Under Construction")
+        welcomeScreen()
+    elif (choice == "4"):
+        print("Under Construction")
+        welcomeScreen()
+
 
 def businessAnalysis_Screen():
     print()
