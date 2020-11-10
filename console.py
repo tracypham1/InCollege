@@ -18,6 +18,7 @@ FILENAME_SAVE_MES = "messages.csv"
 FILENAME_NEW_USER = "new_user.csv"
 FILENAME_NEW_JOB = "new_jobs_notif.csv"
 FILENAME_DEL_JOB = "del_jobs_notif.csv"
+FILENAME_COURSES = "courses.csv"
 STORY = "success_story.txt"
 empty_string = " "
 
@@ -40,6 +41,8 @@ def welcomeScreen():
         open(FILENAME_NEW_USER, 'w').close()
     if(not os.path.exists(FILENAME_NEW_JOB)): 
         open(FILENAME_NEW_JOB, 'w').close()
+    if(not os.path.exists(FILENAME_COURSES)): 
+        open(FILENAME_COURSES, 'w').close()
 
     print()
     print("Select one of the below options:\n")
@@ -47,13 +50,14 @@ def welcomeScreen():
     print("(2) Sign up a new InCollege account") # sign up
     print("(3) Find someone that you know")
     print("(4) Play the video")
-    print("(5) Useful links")
-    print("(6) Important links")
-    print("(7) Exit the program")
+    print("(5) Training")
+    print("(6) Useful links")
+    print("(7) Important links")
+    print("(8) Exit the program")
     choice = input("Your selection: ")
 
     #check the right value of input from user
-    choice = check.check_option(choice,1,7)
+    choice = check.check_option(choice,1,8)
 
     if(choice == "1"):
         manage = m.Manage() #create a new object Manage
@@ -70,10 +74,12 @@ def welcomeScreen():
         print("\nVideo is now playing!\n")
         welcomeScreen()
     elif (choice == "5"):
-        usefulLinks_Screen(0,empty_string)
+        training_Screen()
     elif (choice == "6"):
-        importantLinks_Screen(0, empty_string)
+        usefulLinks_Screen(0,empty_string)
     elif (choice == "7"):
+        importantLinks_Screen(0, empty_string)
+    elif (choice == "8"):
         return
 
 
@@ -459,11 +465,11 @@ def log_in_Screen(name):
     print("(6) Search for friends to connect with")
     print("(7) Show my network")
     print("(8) New Skill")
-    print("(8) New Skill")
     print("(9) Useful links")
     print("(10) Important links")
     print("(11) Send Message")
-    print("(12) Sign Out")
+    print("(12) InCollege Learning")
+    print("(13) Sign Out")
     choice = input("Your selection: ")
 
     #check the right value of input from user
@@ -533,6 +539,8 @@ def log_in_Screen(name):
     elif(choice == "11"):
         send_message(name)
     elif(choice == "12"):
+        InCollege_Learning_Screen(name)
+    elif(choice == "13"):
         welcomeScreen()
 
 def sign_up_Screen():
@@ -1395,3 +1403,131 @@ def check_del_job(name):
     with open(FILENAME_DEL_JOB, "w") as file:
         writer = csv.writer(file)
         writer.writerows(new_notif) 
+
+
+
+
+#####################   Training   ########################
+
+def training_Screen():
+    print()
+    print("Select one of the below options:")
+    print("(1) Training and Education")
+    print("(2) IT Help Desk")
+    print("(3) Business Analysis and Strategy")
+    print("(4) Security")
+    print("(5) Return to Main Menu")
+    choice = input("Your selection: ")
+    print()
+
+    if(choice == "1"):
+        welcomeScreen()     #placeholder
+    elif (choice == "2"):
+        welcomeScreen()     #placeholder
+    elif (choice == "3"):   
+        businessAnalysis_Screen()
+    elif (choice == "4"):
+        welcomeScreen()     #placeholder
+    elif (choice == "5"):
+        welcomeScreen()
+
+def businessAnalysis_Screen():
+    print()
+    print("Trending Courses:")
+    print("(1) How to use InCollege Learning")
+    print("(2) Train the Trainer")
+    print("(3) Gamification of Learning")
+    print("(4) Not seeing what you’re looking for? Sign in to see all 7,609 results.")
+    print("(5) Return to Main Menu")
+    choice = input("Your selection: ")
+    print()
+
+    if(choice == "1"):
+        sign_up_Screen()
+    elif (choice == "2"):
+        sign_up_Screen()
+    elif (choice == "3"):   
+        sign_up_Screen()
+    elif (choice == "4"):
+        sign_up_Screen()
+    elif (choice == "5"):
+        welcomeScreen()
+
+def InCollege_Learning_Screen(name):
+    print()
+    check_Training(name)
+    choice = input("Your selection: ")
+    print()
+
+    if(choice == "1"):
+        completeTraining(name, "How to use InCollege Learning")
+    elif (choice == "2"):
+        completeTraining(name, "Train the Trainer")
+    elif (choice == "3"):   
+        completeTraining(name, "Gamification of Learning")
+    elif (choice == "4"):
+        completeTraining(name, "Understanding the Architectural Design Process")
+    elif (choice == "5"):   
+        completeTraining(name, "Project Management Simplified")
+    elif (choice == "6"):
+        log_in_Screen(name)
+
+def completeTraining(name, course):
+    with open(FILENAME_COURSES, newline='') as f:
+        reader = csv.reader(f)
+        data = list(reader)
+    num = -1
+    for c in data:
+        num += 1
+        if(num%2==0):
+            if(c[0]==name and c[1]==course):
+                choice = input("You have already taken this course, do you want to take it again? ")
+                if choice.lower() == "yes":
+                    print("You have now completed this training")
+                    InCollege_Learning_Screen(name)
+                else:
+                    print("Course Cancelled")
+                    InCollege_Learning_Screen(name)
+    add_Course(name, course)
+    print("You have now completed this training")
+    InCollege_Learning_Screen(name)
+
+def check_Training(name):
+    one=""
+    two=""
+    three=""
+    four=""
+    five=""
+    with open(FILENAME_COURSES, newline='') as f:
+        reader = csv.reader(f)
+        data = list(reader)
+    
+    num = -1
+    for c in data:
+        num += 1
+        if(num%2==0):
+            if(c[0]==name):
+                if c[1]=="How to use InCollege Learning":
+                    one = " [Taken]"
+                elif c[1]=="Train the Trainer":
+                    two = " [Taken]"
+                elif c[1]=="Gamification of Learning":
+                    three = " [Taken]"
+                elif c[1]=="Understanding the Architectural Design Process":
+                    four = " [Taken]"
+                elif c[1]=="Project Management Simplified":
+                    five = " [Taken]"
+
+    print("Courses you can take:")
+    print("(1) How to use InCollege Learning" + one)
+    print("(2) Train the Trainer" + two)
+    print("(3) Gamification of Learning" + three)
+    print("(4) Understanding the Architectural Design Process" + four)
+    print("(5) Project Management Simplified" + five)
+    print("(6) Return to Main Menu")
+
+
+def add_Course(name, course):
+    with open(FILENAME_COURSES, "a") as file:
+        writer_csv = csv.writer(file)
+        writer_csv.writerow((name,course))
