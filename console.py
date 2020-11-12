@@ -1470,13 +1470,13 @@ def businessAnalysis_Screen():
     print()
 
     if(choice == "1"):
-        sign_up_Screen()
+        sign_in()
     elif (choice == "2"):
-        sign_up_Screen()
+        sign_in()
     elif (choice == "3"):   
-        sign_up_Screen()
+        sign_in()
     elif (choice == "4"):
-        sign_up_Screen()
+        sign_in()
     elif (choice == "5"):
         welcomeScreen()
 
@@ -1503,18 +1503,20 @@ def completeTraining(name, course):
     with open(FILENAME_COURSES, newline='') as f:
         reader = csv.reader(f)
         data = list(reader)
-    num = -1
     for c in data:
-        num += 1
-        if(num%2==0):
+        if not c:
+            continue
+        else:
             if(c[0]==name and c[1]==course):
-                choice = input("You have already taken this course, do you want to take it again? ")
-                if choice.lower() == "yes":
-                    print("You have now completed this training")
-                    InCollege_Learning_Screen(name)
-                else:
-                    print("Course Cancelled")
-                    InCollege_Learning_Screen(name)
+                choice = " "
+                while(choice.lower() != "yes" or choice.lower() != "No"):
+                    choice = input("You have already taken this course, do you want to take it again? (Yes/No)")
+                    if choice.lower() == "yes":
+                        print("You have now completed this training")
+                        InCollege_Learning_Screen(name)
+                    elif choice.lower() == "no":
+                        print("Course Cancelled")
+                        InCollege_Learning_Screen(name)
     add_Course(name, course)
     print("You have now completed this training")
     InCollege_Learning_Screen(name)
@@ -1529,10 +1531,11 @@ def check_Training(name):
         reader = csv.reader(f)
         data = list(reader)
     
-    num = -1
+    
     for c in data:
-        num += 1
-        if(num%2==0):
+        if not c:
+            continue
+        else:
             if(c[0]==name):
                 if c[1]=="How to use InCollege Learning":
                     one = " [Taken]"
@@ -1558,3 +1561,11 @@ def add_Course(name, course):
     with open(FILENAME_COURSES, "a") as file:
         writer_csv = csv.writer(file)
         writer_csv.writerow((name,course))
+
+def sign_in():
+    print("Sign into your INCollege Account")
+    name = None
+    while name == None: #if the user fails when loging in the account
+        manage = m.Manage() #create a new object Manage
+        name = manage.log_in() #get user's name after loging in successful  
+    log_in_Screen(name)
