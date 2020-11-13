@@ -473,7 +473,7 @@ def log_in_Screen(name):
     choice = input("Your selection: ")
 
     #check the right value of input from user
-    choice = check.check_option(choice,1,12)
+    choice = check.check_option(choice,1,13)
     
     if(choice == "1"): 
         manage = m.Manage()
@@ -1441,21 +1441,24 @@ def training_edu_screen():
     print("(2) programming training ")
     print("(3) Buisness training")
     print("(4) Medical training")
+    print("(5) Go back to training screen")
     choice = input("Your selection: ")
     print()
 
     if (choice == "1"):
         print("Under Construction")
-        welcomeScreen()
+        training_edu_screen()
     elif (choice == "2"):
         print("Under Construction")
-        welcomeScreen()
+        training_edu_screen()
     elif (choice == "3"):
         print("Under Construction")
-        welcomeScreen()
+        training_edu_screen()
     elif (choice == "4"):
         print("Under Construction")
-        welcomeScreen()
+        training_edu_screen()
+    elif(choice == "5"):
+        training_Screen()
 
 
 def businessAnalysis_Screen():
