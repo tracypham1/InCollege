@@ -2,6 +2,7 @@ import manage as m
 import check 
 import csv
 import os.path
+import job as j
 from datetime import datetime
 from datetime import timedelta
 
@@ -43,6 +44,8 @@ def welcomeScreen():
         open(FILENAME_NEW_JOB, 'w').close()
     if(not os.path.exists(FILENAME_COURSES)): 
         open(FILENAME_COURSES, 'w').close()
+
+    read_newJobs()
 
     print()
     print("Select one of the below options:\n")
@@ -1572,3 +1575,33 @@ def sign_in():
         manage = m.Manage() #create a new object Manage
         name = manage.log_in() #get user's name after loging in successful  
     log_in_Screen(name)
+
+def read_newJobs():
+        manage = m.Manage()
+        lines = list()
+        f = open("newJobs.txt", "r")
+        lines = f.readlines()
+        f.close()
+        i = 0
+        title = ""
+        description = ""
+        employer = ""
+        location = ""
+        salary = 0
+        while(i < len(lines)):
+            title = lines[i]
+            i = i+1
+            description = ""
+            while(lines[i] != "&&&\n"):
+                description += lines[i]
+                i = i+1
+            i = i+1
+            employer = lines[i]
+            i = i+1
+            location = lines[i]
+            i = i+1
+            salary = int(lines[i])
+            i = i+1
+            i = i+1
+            newJ = j.Job(title.rstrip('\n'), description.rstrip('\n'), employer.rstrip('\n'), location.rstrip('\n'), salary, "API_Input")
+            manage.add_job(newJ, "API_Input")

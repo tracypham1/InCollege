@@ -39,7 +39,6 @@ class Manage:
         self.__list_settings = []
         self.__list_profiles = []        
         self.__list_save_job = []
-        
 
         if not os.path.isfile(FILENAME_SAVE_JOB):
             with open(FILENAME_SAVE_JOB,"w") as file:
@@ -373,7 +372,7 @@ class Manage:
                 writer_csv = csv.writer(file)
                 writer_csv.writerow((job.get_title(),job.get_description(),job.get_employer(),job.get_location(),job.get_salary(),job.get_post_name())) 
 
-            return(job.get_post_name())# We can return a tupe here for many purpose later
+            return(job.get_post_name())
 
 
     def new_job(self, post_name):
@@ -671,6 +670,8 @@ class Manage:
             writer = csv.writer(file)
             writer.writerows(lines)
 
+    
+
 
 def valiDate(date_text):
     try:
@@ -699,9 +700,8 @@ def all_users():
 
 
 
-    
 
-                    
+
 
 
 
