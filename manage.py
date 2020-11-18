@@ -229,6 +229,8 @@ class Manage:
             for element in notify_applicants:
                 writer_csv.writerow(element)
 
+        write_jobs()
+
 
 
     def delete_save_job(self, name, title):
@@ -253,7 +255,7 @@ class Manage:
                 print("Try again!")
                 return None #It is easier for pytest
        
-        if len(self.__list_student) < 11:
+        if len(self.__list_student) < 10:
             self.__list_student.append(student)
             user_name = student.get_user_name()
             print("\nCongratulations, ",student.get_name(), "!\nYou signed up and logged in successfully!")
@@ -268,6 +270,7 @@ class Manage:
                 writer_csv = csv.writer(file_stg)
                 writer_csv.writerow((user_name, "on", "on", "on", "English")) #all features on and language set to english when account is created
 
+            write_users()
             return user_name 
             
         else:
@@ -372,6 +375,7 @@ class Manage:
                 writer_csv = csv.writer(file)
                 writer_csv.writerow((job.get_title(),job.get_description(),job.get_employer(),job.get_location(),job.get_salary(),job.get_post_name())) 
 
+            write_jobs()
             return(job.get_post_name())
 
 
@@ -470,6 +474,8 @@ class Manage:
         with open(FILENAME_PRO, "a") as file_pro:
             writer_csv = csv.writer(file_pro)
             writer_csv.writerow((name, title, major, university, bio, experience, education))
+
+        write_profiles()
 
 
     def viewProfile(self, name):
@@ -704,11 +710,57 @@ def all_users():
 
 
 
+def write_jobs():
+    lines = list()
+    with open(FILENAME_JOB,"r") as file:
+        reader_csv = csv.reader(file)
+        i = 0
+        for row in reader_csv:
+            if row != []:
+                lines.append(row[0])
+                lines.append(row[1])
+                lines.append(row[2])
+                lines.append(row[3])
+                lines.append(row[4])
+                lines.append("=====")
+    f = open("MyCollege_jobs.txt", "w")
+    for x in lines:
+        f.write(x + '\n')
 
 
-   
-
+def write_users():
+    lines = list()
+    names = list()
+    with open(FILENAME,"r") as file:
+        reader_csv = csv.reader(file)
+        i = 0
+        for row in reader_csv:
+            if row != []:
+                lines.append(row[0])
+                names.append(row[0])
+                lines.append(row[4])
+                lines.append("=====")
     
+    f = open("MyCollege_users.txt", "w")
+    for x in lines:
+        f.write(x + '\n')
 
-        
-        
+
+
+def write_profiles():
+    lines = list()
+    with open(FILENAME_PRO,"r") as file:
+        reader_csv = csv.reader(file)
+        i = 0
+        for row in reader_csv:
+            if row != []:
+                lines.append(row[1])
+                lines.append(row[2])
+                lines.append(row[3])
+                lines.append(row[4])
+                lines.append(row[5])
+                lines.append(row[6])
+                lines.append("=====")
+    f = open("MyCollege_profiles.txt", "w")
+    for x in lines:
+        f.write(x + '\n')

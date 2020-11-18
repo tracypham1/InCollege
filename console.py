@@ -3,6 +3,7 @@ import check
 import csv
 import os.path
 import job as j
+import student as s
 from datetime import datetime
 from datetime import timedelta
 
@@ -46,6 +47,7 @@ def welcomeScreen():
         open(FILENAME_COURSES, 'w').close()
 
     read_newJobs()
+    read_studentAccounts()
 
     print()
     print("Select one of the below options:\n")
@@ -1605,3 +1607,26 @@ def read_newJobs():
             i = i+1
             newJ = j.Job(title.rstrip('\n'), description.rstrip('\n'), employer.rstrip('\n'), location.rstrip('\n'), salary, "API_Input")
             manage.add_job(newJ, "API_Input")
+
+
+def read_studentAccounts():
+        manage = m.Manage()
+        lines = list()
+        f = open("studentAccounts.txt", "r")
+        lines = f.readlines()
+        f.close()
+        i = 0
+        username = ""
+        password = ""
+        while(i < len(lines)):
+            username = lines[i]
+            i = i+1
+            password = lines[i]
+            i = i+1
+            i = i+1
+            newS = s.Student(username.rstrip('\n'), password.rstrip('\n'), "API_Input_First", "API_Input_Second")
+            manage.add_student(newS)
+
+
+
+
