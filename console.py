@@ -1627,12 +1627,13 @@ def read_newJobs():
         employer = ""
         location = ""
         salary = 0
+        poster = ""
         while(i < len(lines)):
             title = lines[i]
             i = i+1
             description = ""
             while(lines[i] != "&&&\n"):
-                description += lines[i]
+                description += (lines[i].rstrip('\n') + ' ')
                 i = i+1
             i = i+1
             employer = lines[i]
@@ -1641,8 +1642,10 @@ def read_newJobs():
             i = i+1
             salary = int(lines[i])
             i = i+1
+            poster = lines[i]
             i = i+1
-            newJ = j.Job(title.rstrip('\n'), description.rstrip('\n'), employer.rstrip('\n'), location.rstrip('\n'), salary, "API_Input")
+            i = i+1
+            newJ = j.Job(title.rstrip('\n'), description.rstrip('\n'), employer.rstrip('\n'), location.rstrip('\n'), salary, poster.rstrip('\n'))
             manage.add_job(newJ, "API_Input")
 
 
@@ -1656,13 +1659,19 @@ def read_studentAccounts():
         i = 0
         username = ""
         password = ""
+        fname = ""
+        lname = ""
         while(i < len(lines)):
             username = lines[i]
             i = i+1
             password = lines[i]
             i = i+1
+            fname = lines[i]
             i = i+1
-            newS = s.Student(username.rstrip('\n'), password.rstrip('\n'), "API_Input_First", "API_Input_Second")
+            lname = lines[i]
+            i = i+1
+            i = i+1
+            newS = s.Student(username.rstrip('\n'), password.rstrip('\n'), fname.rstrip('\n'), lname.rstrip('\n'))
             manage.add_student(newS)
 
 ############ Reads and adds courses from newtraining.txt ############

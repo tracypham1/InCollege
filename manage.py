@@ -364,6 +364,11 @@ class Manage:
 
 
     def add_job(self, job, n):
+        for element in self.__list_job:
+            if element.get_title() == job.get_title():
+                print("\nThere is a job with that name, this job must be renamed to be entered")
+                return None
+        
         if len(self.__list_job) > 9:
             print("You cannot post more jobs! Limit of 10!")
             return None
@@ -730,16 +735,12 @@ def write_jobs():
 
 def write_users():
     lines = list()
-    names = list()
     with open(FILENAME,"r") as file:
         reader_csv = csv.reader(file)
         i = 0
         for row in reader_csv:
             if row != []:
-                lines.append(row[0])
-                names.append(row[0])
-                lines.append(row[4])
-                lines.append("=====")
+                lines.append(row[0] + " " + row[4])
     
     f = open("MyCollege_users.txt", "w")
     for x in lines:
