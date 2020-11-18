@@ -48,7 +48,8 @@ def welcomeScreen():
 
     read_newJobs()
     read_studentAccounts()
-
+    read_savedJobs()
+    read_appliedJobs()
     print()
     print("Select one of the below options:\n")
     print("(1) Log-in to an existing account") #log-in
@@ -1008,6 +1009,8 @@ def job_Screen(name):
                             manage.save_date_LastJobAppliedTo(name)
                     elif (choice_B == "2"): #Save
                         manage.add_save_job(name,jobs[int(choice)-1][0])
+            read_savedJobs()
+            read_appliedJobs()
                         
         #View jobs applied to
         elif(selection == "2"): 
@@ -1080,6 +1083,7 @@ def job_Screen(name):
 
                 elif (choice == "2"):
                     pass
+            read_savedJobs()
         
         elif(selection == "5"): #return
             log_in_Screen(name)
@@ -1415,13 +1419,19 @@ def check_del_job(name):
 #####################   Training   ########################
 
 def training_Screen():
+    TrainingList=read_Training()
     print()
     print("Select one of the below options:")
     print("(1) Training and Education")
     print("(2) IT Help Desk")
     print("(3) Business Analysis and Strategy")
     print("(4) Security")
-    print("(5) Return to Main Menu")
+    i = 4
+    for c in TrainingList:
+        i=i+1
+        print("(" + str(i) + ") " + c, end='\n')
+    i=i+1
+    print("(" + str(i) + ") Return to Main Menu")
     choice = input("Your selection: ")
     print()
 
@@ -1435,7 +1445,10 @@ def training_Screen():
     elif (choice == "4"):
         print("coming soon!")
         welcomeScreen()
-    elif (choice == "5"):
+    elif (choice == str(i)):
+        welcomeScreen()
+    else:
+        print("coming soon!")
         welcomeScreen()
 
 
@@ -1476,7 +1489,8 @@ def businessAnalysis_Screen():
     print("(5) Return to Main Menu")
     choice = input("Your selection: ")
     print()
-
+    
+    
     if(choice == "1"):
         sign_in()
     elif (choice == "2"):
@@ -1485,10 +1499,12 @@ def businessAnalysis_Screen():
         sign_in()
     elif (choice == "4"):
         sign_in()
+
     elif (choice == "5"):
         welcomeScreen()
 
 def InCollege_Learning_Screen(name):
+    TrainingList = read_Training()
     print()
     check_Training(name)
     choice = input("Your selection: ")
@@ -1504,8 +1520,15 @@ def InCollege_Learning_Screen(name):
         completeTraining(name, "Understanding the Architectural Design Process")
     elif (choice == "5"):   
         completeTraining(name, "Project Management Simplified")
-    elif (choice == "6"):
-        log_in_Screen(name)
+    else:
+        i = 5
+        for c in TrainingList:
+            i=i+1
+            if choice == str(i):
+                completeTraining(name, c)
+        i = i + 1
+        if (choice == str(i)):
+            log_in_Screen(name)
 
 def completeTraining(name, course):
     with open(FILENAME_COURSES, newline='') as f:
@@ -1526,10 +1549,12 @@ def completeTraining(name, course):
                         print("Course Cancelled")
                         InCollege_Learning_Screen(name)
     add_Course(name, course)
+    write_Training()
     print("You have now completed this training")
     InCollege_Learning_Screen(name)
 
 def check_Training(name):
+    TrainingList = read_Training()
     one=""
     two=""
     three=""
@@ -1538,7 +1563,6 @@ def check_Training(name):
     with open(FILENAME_COURSES, newline='') as f:
         reader = csv.reader(f)
         data = list(reader)
-    
     
     for c in data:
         if not c:
@@ -1562,7 +1586,19 @@ def check_Training(name):
     print("(3) Gamification of Learning" + three)
     print("(4) Understanding the Architectural Design Process" + four)
     print("(5) Project Management Simplified" + five)
-    print("(6) Return to Main Menu")
+    i=5
+    for d in TrainingList:
+        i=i+1
+        taken = ""
+        for f in data:
+            if not f:
+                continue
+            if f[0]==name and f[1]==d:
+                taken = " [Taken]"
+        print("(" + str(i) + ") " + d + taken) 
+                
+    i = i+1
+    print("(" + str(i) + ") Return to Main Menu")
 
 
 def add_Course(name, course):
@@ -1579,6 +1615,7 @@ def sign_in():
     log_in_Screen(name)
 
 def read_newJobs():
+    if os.path.exists("newJobs.txt"):
         manage = m.Manage()
         lines = list()
         f = open("newJobs.txt", "r")
@@ -1610,6 +1647,7 @@ def read_newJobs():
 
 
 def read_studentAccounts():
+    if os.path.exists("studentAccounts.txt"):
         manage = m.Manage()
         lines = list()
         f = open("studentAccounts.txt", "r")
@@ -1627,6 +1665,75 @@ def read_studentAccounts():
             newS = s.Student(username.rstrip('\n'), password.rstrip('\n'), "API_Input_First", "API_Input_Second")
             manage.add_student(newS)
 
+############ Reads and adds courses from newtraining.txt ############
+def read_Training():
+    if os.path.exists("newtraining.txt"):
+        lines = list()
+        f = open("newtraining.txt", "r")
+        lines = f.read().split('\n')
+        f.close()
+        return lines
+
+############ Writes Completed Courses for each user into MyCollege_training.txt ############
+def write_Training():
+    p = open("MyCollege_training.txt", "w+")
+    with open("courses.csv", newline='') as f:
+        reader = csv.reader(f)
+        data = list(reader)
+    data.sort()
+    name = ""
+    for c in data:
+        if not c:
+            continue
+        if name == "":
+            name=c[0]
+            p.write(c[0] + "\n" + c[1] + "\n")
+        elif c[0]==name:
+            p.write(c[1] + "\n")
+        elif c[0]!=name:
+            p.write("=====\n")
+            name=c[0]
+            p.write(c[0] + "\n" + c[1] + "\n")
 
 
-
+############ Saved Jobs API ############
+def read_savedJobs():
+    p = open("MyCollege_savedJobs.txt", "w+")
+    with open("save_job.csv", newline='') as f:
+        reader = csv.reader(f)
+        data = list(reader)
+    data.sort()
+    name = ""
+    for c in data:
+        if not c:
+            continue
+        if name == "":
+            name=c[0]
+            p.write(c[0] + "\n" + c[1] + "\n")
+        elif c[0]==name:
+            p.write(c[1] + "\n")
+        elif c[0]!=name:
+            p.write("=====\n")
+            name=c[0]
+            p.write(c[0] + "\n" + c[1] + "\n")
+    
+############ Applied Jobs API ############
+def read_appliedJobs():
+    p = open("MyCollege_appliedJobs.txt", "w+")
+    with open("applications.csv", newline='') as f:
+        reader = csv.reader(f)
+        data = list(reader)
+    while([] in data) : 
+        data.remove([])
+    data.sort(key = lambda x: x[1])
+    title = ""
+    for c in data:
+        if title == "":
+            title=c[1]
+            p.write(c[1] + "\n" + c[0] + "\n\"" + c[5] + "\"\n")
+        elif c[1]==title:
+            p.write(c[0] + "\n\"" + c[5] + "\"\n")
+        elif c[1]!=title:
+            p.write("=====\n")
+            title=c[1]
+            p.write(c[1] + "\n" + c[0] + "\n\"" + c[5] + "\"\n")
