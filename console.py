@@ -35,10 +35,16 @@ def welcomeScreen():
         open("requests.csv", 'w').close()
     if(not os.path.exists("friends.csv")):
         open("friends.csv", 'w').close()
+    if(not os.path.exists("save_job.csv")):
+        open("save_job.csv", 'w').close()
+    if(not os.path.exists("courses.csv")):
+        open("courses.csv", 'w').close()
     if(not os.path.exists(FILENAME_MES)):
         open(FILENAME_MES, 'w').close()
     if(not os.path.exists(FILENAME_SAVE_MES)):
         open(FILENAME_SAVE_MES, 'w').close()
+    if(not os.path.exists(FILENAME_APP)):
+        open(FILENAME_APP, 'w').close()
     if (not os.path.exists(FILENAME_NEW_USER)):
         open(FILENAME_NEW_USER, 'w').close()
     if(not os.path.exists(FILENAME_NEW_JOB)): 
@@ -46,10 +52,27 @@ def welcomeScreen():
     if(not os.path.exists(FILENAME_COURSES)): 
         open(FILENAME_COURSES, 'w').close()
 
+    if(not os.path.exists("MyCollege_appliedJobs.txt")): 
+        open(FILENAME_COURSES, 'w').close()
+    if(not os.path.exists("MyCollege_jobs.txt")): 
+        open(FILENAME_COURSES, 'w').close()
+    if(not os.path.exists("MyCollege_profiles.txt")): 
+        open(FILENAME_COURSES, 'w').close()
+    if(not os.path.exists("MyCollege_savedJobs.txt")): 
+        open(FILENAME_COURSES, 'w').close()
+    if(not os.path.exists("MyCollege_users.txt")): 
+        open(FILENAME_COURSES, 'w').close()
+    if(not os.path.exists("newJobs.txt")): 
+        open(FILENAME_COURSES, 'w').close()
+    if(not os.path.exists("studentAccounts.txt")): 
+        open(FILENAME_COURSES, 'w').close()
+
+    print("The following additions (or refusals) are from the API:")
     read_newJobs()
     read_studentAccounts()
     read_savedJobs()
     read_appliedJobs()
+
     print()
     print("Select one of the below options:\n")
     print("(1) Log-in to an existing account") #log-in
@@ -1618,6 +1641,7 @@ def read_newJobs():
     if os.path.exists("newJobs.txt"):
         manage = m.Manage()
         lines = list()
+        jobs = list()
         f = open("newJobs.txt", "r")
         lines = f.readlines()
         f.close()
@@ -1647,12 +1671,15 @@ def read_newJobs():
             i = i+1
             newJ = j.Job(title.rstrip('\n'), description.rstrip('\n'), employer.rstrip('\n'), location.rstrip('\n'), salary, poster.rstrip('\n'))
             manage.add_job(newJ, "API_Input")
+            jobs.append(newJ)
+        return jobs
 
 
 def read_studentAccounts():
     if os.path.exists("studentAccounts.txt"):
         manage = m.Manage()
         lines = list()
+        students = list()
         f = open("studentAccounts.txt", "r")
         lines = f.readlines()
         f.close()
@@ -1673,6 +1700,8 @@ def read_studentAccounts():
             i = i+1
             newS = s.Student(username.rstrip('\n'), password.rstrip('\n'), fname.rstrip('\n'), lname.rstrip('\n'))
             manage.add_student(newS)
+            students.append(newS)
+        return students
 
 ############ Reads and adds courses from newtraining.txt ############
 def read_Training():

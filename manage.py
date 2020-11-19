@@ -731,6 +731,7 @@ def write_jobs():
     f = open("MyCollege_jobs.txt", "w")
     for x in lines:
         f.write(x + '\n')
+    return lines
 
 
 def write_users():
@@ -745,6 +746,7 @@ def write_users():
     f = open("MyCollege_users.txt", "w")
     for x in lines:
         f.write(x + '\n')
+    return lines
 
 
 
@@ -765,3 +767,4 @@ def write_profiles():
     f = open("MyCollege_profiles.txt", "w")
     for x in lines:
         f.write(x + '\n')
+    return lines
