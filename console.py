@@ -1450,9 +1450,11 @@ def training_Screen():
     print("(3) Business Analysis and Strategy")
     print("(4) Security")
     i = 4
-    for c in TrainingList:
-        i=i+1
-        print("(" + str(i) + ") " + c, end='\n')
+
+    if TrainingList != 0:
+        for c in TrainingList:
+            i=i+1
+            print("(" + str(i) + ") " + c, end='\n')
     i=i+1
     print("(" + str(i) + ") Return to Main Menu")
     choice = input("Your selection: ")
@@ -1462,12 +1464,12 @@ def training_Screen():
         training_edu_screen()
     elif (choice == "2"):
         print("coming soon!")
-        welcomeScreen()
+        training_Screen()
     elif (choice == "3"):   
         businessAnalysis_Screen()
     elif (choice == "4"):
         print("coming soon!")
-        welcomeScreen()
+        training_Screen()
     elif (choice == str(i)):
         welcomeScreen()
     else:
@@ -1711,6 +1713,8 @@ def read_Training():
         lines = f.read().split('\n')
         f.close()
         return lines
+    else:
+        return 0
 
 ############ Writes Completed Courses for each user into MyCollege_training.txt ############
 def write_Training():

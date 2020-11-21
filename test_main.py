@@ -109,6 +109,69 @@ class TestClass:
         job11 = jo.Job("Error", "TransportsItems", "Bridges", "UCA", "10", "TP1")
         assert manage.add_job(job11, "TP1") == None
 
+    def test_write_jobs(self):
+        manage = ma.Manage()
+        lines = list()
+        lines.append("Programming")
+        lines.append("will make app")
+        lines.append("tesla")
+        lines.append("calif")
+        lines.append("100000")
+        lines.append("=====")
+        with open(FILENAME_JOB, "w") as file:
+            writer_csv = csv.writer(file)
+            writer_csv.writerow(lines)
+
+        assert ma.write_jobs() == lines
+
+    def test_write_users(self):
+        manage = ma.Manage()
+        lines = list()
+        lines.append("cocoCute")
+        lines.append("Coco@123")
+        lines.append("coco")
+        lines.append("quemba")
+        lines.append("standard")
+        lines.append("0")
+        with open(FILENAME_STD, "w") as file:
+            writer_csv = csv.writer(file)
+            writer_csv.writerow(lines)
+        test = list()
+        test.append("cocoCute standard")
+
+        assert ma.write_users() == test
+
+
+    def test_write_profiles(self):
+        manage = ma.Manage()
+        lines = list()
+        lines.append("cocoCute")
+        lines.append("Comp Sci student")
+        lines.append("Comp sci")
+        lines.append("PHSC")
+        lines.append("I like walks")
+        lines.append(" ")
+        lines.append("[Pasco Hernado State,Comp sci degree,3]")
+        lines.append("=====")
+
+        with open(FILENAME_PRO, "w") as file:
+            writer_csv = csv.writer(file)
+            writer_csv.writerow(lines)
+
+        test = list()
+        test.append("Comp Sci student")
+        test.append("Comp sci")
+        test.append("PHSC")
+        test.append("I like walks")
+        test.append(" ")
+        test.append("[Pasco Hernado State,Comp sci degree,3]")
+        test.append("=====")
+
+        assert ma.write_profiles() == test
+
+
+
+
     def test_save_job(self):                    #tests the saving of jobs
         filename = "save_job.csv"
         f = open(filename, "w+")
