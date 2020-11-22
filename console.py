@@ -53,19 +53,22 @@ def welcomeScreen():
         open(FILENAME_COURSES, 'w').close()
 
     if(not os.path.exists("MyCollege_appliedJobs.txt")): 
-        open(FILENAME_COURSES, 'w').close()
+        open("MyCollege_appliedJobs.txt", 'w').close()
     if(not os.path.exists("MyCollege_jobs.txt")): 
-        open(FILENAME_COURSES, 'w').close()
+        open("MyCollege_jobs.txt", 'w').close()
     if(not os.path.exists("MyCollege_profiles.txt")): 
-        open(FILENAME_COURSES, 'w').close()
+        open("MyCollege_profiles.txt", 'w').close()
     if(not os.path.exists("MyCollege_savedJobs.txt")): 
-        open(FILENAME_COURSES, 'w').close()
+        open("MyCollege_savedJobs.txt", 'w').close()
     if(not os.path.exists("MyCollege_users.txt")): 
-        open(FILENAME_COURSES, 'w').close()
+        open("MyCollege_users.txt", 'w').close()
     if(not os.path.exists("newJobs.txt")): 
-        open(FILENAME_COURSES, 'w').close()
+        open("newJobs.txt", 'w').close()
     if(not os.path.exists("studentAccounts.txt")): 
-        open(FILENAME_COURSES, 'w').close()
+        open("studentAccounts.txt", 'w').close()
+    if(not os.path.exists("newtraining.txt")): 
+        open("newtraining.txt", 'w').close()
+
 
     print("The following additions (or refusals) are from the API:")
     read_newJobs()
@@ -1709,16 +1712,20 @@ def read_studentAccounts():
 def read_Training():
     if os.path.exists("newtraining.txt"):
         lines = list()
+        newlist = list()
         f = open("newtraining.txt", "r")
         lines = f.read().split('\n')
         f.close()
-        return lines
-    else:
-        return 0
+        for d in lines:
+            if d == '':
+                continue
+            else:
+                newlist.append(d)
+        return newlist
 
 ############ Writes Completed Courses for each user into MyCollege_training.txt ############
 def write_Training():
-    p = open("MyCollege_training.txt", "w+")
+    p = open("MyCollege_training.txt", "w")
     with open("courses.csv", newline='') as f:
         reader = csv.reader(f)
         data = list(reader)
